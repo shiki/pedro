@@ -1,0 +1,7 @@
+{
+  "dev": {
+    "driver": "pg",
+    "user": "pedro_hokage",
+    "database": "pedro"
+  }
+}

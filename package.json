@@ -1,0 +1,12 @@
+{
+  "name": "pedro",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "git@bitbucket.org:shikii/pedro.git",
+  "author": "Shiki <jayson@basanes.net>",
+  "license": "MIT",
+  "dependencies": {
+    "db-migrate": "^0.10.0-beta.20",
+    "db-migrate-pg": "^0.1.11"
+  }
+}
