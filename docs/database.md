@@ -37,3 +37,10 @@ Some tools for working with Postgres:
 * [How to store UUIDs in Postgres](http://www.simononsoftware.com/how-to-store-uuids-in-postgresql/)
 * [CHAR(X) VS. VARCHAR(X) VS. VARCHAR VS. TEXT – UPDATED 2010-03-03](https://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs-text/)
 * [Always Use TIMESTAMP WITH TIME ZONE](http://justatheory.com/computers/databases/postgresql/use-timestamptz.html)
+* [UUIDs & Clustered Indexes](http://www.postgresql-archive.org/UUIDs-amp-Clustered-Indexes-td5918560.html) Information about Postgres not really having a clustered index mechanism so the issues regarding guid causing performance issues is irrelevant. There's also [this](https://goo.gl/1I9DBL).
+* [Which UUID version to use](https://stackoverflow.com/questions/20342058/which-uuid-version-to-use)
+* [UUID Primary Keys in PostgreSQL](http://www.starkandwayne.com/blog/uuid-primary-keys-in-postgresql/)
+
+## Facts
+
+* iOS `NSUUID` uses UUID v4
