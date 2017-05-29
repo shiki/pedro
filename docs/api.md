@@ -38,6 +38,7 @@ HS256 (HMAC SHA256) will be used for signing.
 * [node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) will be used for generating web tokens
 * [hapi](https://hapijs.com/) will be used as the main framework
 * No library will be used for OAuth2. We just need to follow the protocol described in the _Process_ section.
+* Unit tests will be written using [Ava](https://github.com/avajs/ava)
 
 ## Resources
 
@@ -49,3 +50,4 @@ HS256 (HMAC SHA256) will be used for signing.
 * [Stateless authentication with OAuth 2 and JWT - JavaZone 2015](https://www.slideshare.net/alvarosanchezmariscal/stateless-authentication-with-oauth-2-and-jwt-javazone-2015)
 * There was a critical vulnerability for JWT described [here](https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/). Just something to watch out for.
 * This StackExchange answer describes the difference between HS256 and ECDSA-SHA256: https://crypto.stackexchange.com/a/30658
+* [Testing Hapi.js APIs](https://sethlopez.me/article/testing-hapi-js-apis/)
