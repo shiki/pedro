@@ -34,3 +34,13 @@ test('can create a user', async (done) => {
 
   done()
 })
+
+test('can create a user without giving a uuid', async (done) => {
+  let database = db.shared()
+
+  let created = await database.users.insert({apns_key: null})
+  expect(created).not.toBeNull()
+  expect(created.uuid).not.toBeFalsy()
+
+  done()
+})

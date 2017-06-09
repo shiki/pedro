@@ -1,15 +1,15 @@
-import test from 'ava'
-import server from '../server'
+// import test from 'ava'
+const server = require('../server')
 
-test('/hello', t => {
+test('/hello', done => {
   const request = {
     method: 'GET',
     url: '/hello'
   }
 
-  return server.inject(request)
-    .then(response => {
-      t.is(response.statusCode, 200, 'status code is 200')
-      t.is(response.payload, 'hello world')
-    })
+  return server.inject(request).then(response => {
+    expect(response.statusCode).toBe(200)
+    expect(response.payload).toBe('hello world')
+    done()
+  })
 })
