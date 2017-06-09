@@ -3,5 +3,10 @@
     "driver": "pg",
     "user": "pedro_hokage",
     "database": "pedro"
+  },
+  "test": {
+    "driver": "pg",
+    "user": "pedro_hokage",
+    "database": "pedro_test"
   }
 }

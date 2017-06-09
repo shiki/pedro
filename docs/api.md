@@ -8,11 +8,13 @@ With the auth workflow process, I don't think I even need to use a third party l
 
 1. Client will send a `POST /token`
 
-       POST https://api.oauth2server.com/token
-          grant_type=password&
-          username=USERNAME&
-          password=PASSWORD&
-          client_id=CLIENT_ID
+    ```
+    POST https://api.oauth2server.com/token
+      grant_type=password&
+      username=USERNAME&
+      password=PASSWORD&
+      client_id=CLIENT_ID
+    ```
 
    Note that the parameters should be in the `POST` body since that would be more secure.
 
@@ -22,8 +24,10 @@ With the auth workflow process, I don't think I even need to use a third party l
 
 2. With the token from `POST /token`, subsequent requests will provide the token in the header
 
-        curl -H "Authorization: Bearer RsT5OjbzRn430zqMLgV3Ia" \
-        https://api.oauth2server.com/1/me
+    ```bash
+    curl -H "Authorization: Bearer RsT5OjbzRn430zqMLgV3Ia" \
+    https://api.oauth2server.com/1/me
+    ```
 
 ## Access Tokens (JWT)
 
@@ -33,12 +37,60 @@ I should still probably log the generated JWT so I can track possible abuse.
 
 HS256 (HMAC SHA256) will be used for signing.
 
+### Header
+
+```json
+{
+    "typ": "JWT",
+    "alg": "HS256"
+}
+```
+
+### Payload
+
+```json
+{
+    "sub": "b08f86af-35da-48f2-8fab-cef3904660bd",
+    "iat": 1496148615
+}
+```
+
+Where:
+
+* `sub`: The `user.uuid`
+* `iat`: The unix time the token was generated
+
 ## Implementation
 
 * [node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) will be used for generating web tokens
 * [hapi](https://hapijs.com/) will be used as the main framework
 * No library will be used for OAuth2. We just need to follow the protocol described in the _Process_ section.
 * Unit tests will be written using [Ava](https://github.com/avajs/ava)
+
+## Endpoints
+
+### `POST /token`
+
+* Accepts parameters:
+  * `anon_uuid`. A unique identifier. This would most probably be just a random UUID generated from the app. This should be different from `user.uuid` for security.
+  * `grant_type`. Currently accepted is `anon`
+  * `client_id`. Will be checked if it's a valid app id
+* If a user exists with the same `anon_uuid`, that user will be returned. If there is no user found, a new user will be created.
+* The `anon_uuid` should not be returned in the JSON
+* The returned `access_token` will be logged 
+* Returns:
+
+    ```json
+    {
+      "data": {
+        "access_token": "<access_token>",
+        "user": {
+          "uuid": "...",
+          ... 
+        }
+      }
+    }
+    ```
 
 ## Resources
 

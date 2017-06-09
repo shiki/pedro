@@ -13,6 +13,13 @@ Some research was done whether to use `id` or `uuid` as primary keys. It is no q
 
 Migrations are done with [db-migrate](https://github.com/db-migrate/node-db-migrate).
 
+To migrate both test and dev databases
+
+```
+$ ./node_modules/.bin/db-migrate --env test up
+$ ./node_modules/.bin/db-migrate --env dev up
+```
+
 ## Tools
 
 Some tools for working with Postgres:
@@ -44,3 +51,19 @@ Some tools for working with Postgres:
 ## Facts
 
 * iOS `NSUUID` uses UUID v4
+
+## Postgres Notes
+
+### Logging in 
+
+```
+$ psql
+```
+
+To exit, enter `\q`
+
+### Creating a database
+
+```sql
+CREATE DATABASE my_postgres_db OWNER postgres_user;
+```
