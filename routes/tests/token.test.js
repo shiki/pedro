@@ -67,7 +67,7 @@ test('creates a new user if the anon_uuid is new', async done => {
   expect(await db().users.count()).toBe("1")
   const user = await db().users.findOne()
 
-  const accessToken = jwt.verify(payload.accessToken, constants.jwtSecretKey)
+  const accessToken = jwt.verify(payload.access_token, constants.jwtSecretKey)
   expect(Object.keys(accessToken)).toEqual(['version', 'sub', 'iat'])
   expect(accessToken.sub).toBe(user.uuid)
   expect(accessToken.version).toBe("1")
@@ -101,7 +101,7 @@ test('returns the user with the same anon_uuid', async done => {
   // No new user was created
   expect(await db().users.count()).toBe("1")
 
-  const accessToken = jwt.verify(payload.accessToken, constants.jwtSecretKey)
+  const accessToken = jwt.verify(payload.access_token, constants.jwtSecretKey)
   expect(Object.keys(accessToken)).toEqual(['version', 'sub', 'iat'])
   expect(accessToken.sub).toBe(user.uuid)
   expect(accessToken.version).toBe("1")

@@ -43,7 +43,7 @@ async function handler(request, reply) {
 
   const token = generateToken(user)
   const response = {
-    accessToken: token,
+    access_token: token,
     user: mask(user, 'uuid,created_at,updated_at')
   }
   reply(response)
