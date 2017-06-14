@@ -9,15 +9,20 @@
     "db-migrate": "^0.10.0-beta.20",
     "db-migrate-pg": "^0.1.11",
     "hapi": "^16.1.1",
+    "json-mask": "^0.3.8",
     "jsonwebtoken": "^7.4.1",
     "massive": "^3.0.0-rc1",
     "offensive": "^0.8.0",
     "pg-monitor": "^0.7.1"
   },
   "devDependencies": {
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-env": "^1.5.2",
+    "babel-register": "^6.24.1",
     "jest": "^20.0.4"
   },
   "scripts": {
+    "start": "node bootstrap.js",
     "test": "jest",
     "test-watch": "jest --watch"
   }

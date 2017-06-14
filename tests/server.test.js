@@ -1,5 +1,5 @@
-// import test from 'ava'
-const server = require('../server')
+
+import { server } from '../server'
 
 test('/hello', done => {
   const request = {

@@ -1,22 +1,16 @@
 'use strict';
 
-const Hapi = require('hapi')
-// const db = require('./services/db')
+import Hapi from 'hapi'
+import * as db from './services/db'
 
 // Create a server with a host and port
-const server = new Hapi.Server();
+export const server = new Hapi.Server();
 server.connection({
   host: 'localhost',
   port: 8000
 })
 
-server.route({
-  method: 'POST',
-  path: '/token',
-  handler: (request, reply) => {
-
-  }
-})
+server.route(require('./routes/token').create)
 
 // Add the route
 server.route({
@@ -24,17 +18,11 @@ server.route({
   path: '/hello',
   handler: function (request, reply) {
     return reply('hello world')
-    // const obj = [{
-    //   ti: 'tia',
-    //   ref: 'lkjdfljdslf'
-    // }]
-    // return reply(obj)
-    // return reply('hello world');
   }
 })
 
-// Start the server
-if (!module.parent) {
+export async function start() {
+  await db.bootstrap()
   server.start((err) => {
     if (err) {
       throw err;
@@ -43,4 +31,7 @@ if (!module.parent) {
   });
 }
 
-module.exports = server;
+// Start the server
+if (!module.parent) {
+  start()
+}

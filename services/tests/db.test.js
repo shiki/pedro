@@ -1,9 +1,9 @@
 
-const db = require('../db')
-const fixtures = require('../../tests/fixtures')
+import * as db from '../db'
+import { reset } from '../../tests/fixtures'
 
 beforeEach(() => {
-  return fixtures.reset()
+  return reset()
 })
 
 test('can connect', () => {
