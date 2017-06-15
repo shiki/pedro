@@ -1,10 +1,11 @@
 import Joi from 'joi'
 import Boom from 'boom'
-import constants from '../constants'
-import { shared as db } from '../services/db'
 import jwt from 'jsonwebtoken'
 import check from 'offensive'
 import mask from 'json-mask'
+
+import constants from '../constants'
+import { shared as db } from '../services/db'
 
 const config = {
   validate: {
@@ -17,10 +18,7 @@ const config = {
 }
 
 async function handler(request, reply) {
-  const {
-    anon_uuid: anonUUID,
-    client_id: clientId
-  } = request.payload
+  const { anon_uuid: anonUUID, client_id: clientId } = request.payload
 
   if (constants.clientIds.indexOf(clientId) < 0) {
     return reply(Boom.unauthorized('Invalid client_id'))
@@ -29,12 +27,12 @@ async function handler(request, reply) {
   let user = null
 
   try {
-    const users = await db().users.find({anon_uuid: anonUUID})
+    const users = await db().users.find({ anon_uuid: anonUUID })
     if (users.length > 0) {
       check(users.length, 'users.length').is.exactly(1)
       user = users[0]
     } else {
-      user = await db().users.insert({anon_uuid: anonUUID})
+      user = await db().users.insert({ anon_uuid: anonUUID })
     }
   } catch (e) {
     console.error(e)
@@ -46,13 +44,14 @@ async function handler(request, reply) {
     access_token: token,
     user: mask(user, 'uuid,created_at,updated_at')
   }
-  reply(response)
+
+  return reply(response)
 }
 
 function generateToken(user) {
   const payload = {
     // Schema version. I think I can use this to regenerate/improve tokens later
-    version: "1",
+    version: '1',
     sub: user.uuid
   }
   return jwt.sign(payload, constants.jwtSecretKey)
@@ -61,6 +60,6 @@ function generateToken(user) {
 export const create = {
   method: 'POST',
   path: '/token',
-  handler: handler,
-  config: config
+  handler,
+  config
 }

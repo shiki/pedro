@@ -1,10 +1,8 @@
-'use strict';
-
 import Hapi from 'hapi'
 import * as db from './services/db'
 
 // Create a server with a host and port
-export const server = new Hapi.Server();
+export const server = new Hapi.Server()
 server.connection({
   host: 'localhost',
   port: 8000
@@ -16,19 +14,19 @@ server.route(require('./routes/token').create)
 server.route({
   method: 'GET',
   path: '/hello',
-  handler: function (request, reply) {
+  handler(request, reply) {
     return reply('hello world')
   }
 })
 
 export async function start() {
   await db.bootstrap()
-  server.start((err) => {
+  server.start(err => {
     if (err) {
-      throw err;
+      throw err
     }
-    console.log('Server running at:', server.info.uri);
-  });
+    console.log('Server running at:', server.info.uri)
+  })
 }
 
 // Start the server

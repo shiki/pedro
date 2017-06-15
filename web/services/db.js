@@ -2,13 +2,13 @@ import Massive from 'massive'
 import check from 'offensive'
 // const monitor = require('pg-monitor')
 
-let config = {
-  host: 'localhost', 
-  port: 5432, 
-  database: 'pedro', 
+const config = {
+  host: 'localhost',
+  port: 5432,
+  database: 'pedro',
   // user: 'pedro_hokage'
-  user: 'pedro_user', 
-  password: 'harvester_addicted_saddlebow_obeli_revaluate_birchen', 
+  user: 'pedro_user',
+  password: 'harvester_addicted_saddlebow_obeli_revaluate_birchen'
 }
 
 if (process.env.NODE_ENV === 'test') {
@@ -36,4 +36,3 @@ export function shared() {
 
   return database
 }
-
