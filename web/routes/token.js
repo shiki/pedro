@@ -35,7 +35,7 @@ async function handler(request, reply) {
       user = await db().users.insert({ anon_uuid: anonUUID })
     }
   } catch (e) {
-    console.error(e)
+    request.log('error', e)
     return reply(Boom.badImplementation())
   }
 

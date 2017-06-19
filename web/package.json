@@ -13,7 +13,8 @@
     "jsonwebtoken": "^7.4.1",
     "massive": "^3.0.0-rc1",
     "offensive": "^0.8.0",
-    "pg-monitor": "^0.7.1"
+    "pg-monitor": "^0.7.1",
+    "rollbar": "^2.0.4"
   },
   "devDependencies": {
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
