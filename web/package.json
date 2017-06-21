@@ -17,6 +17,7 @@
     "rollbar": "^2.0.4"
   },
   "devDependencies": {
+    "babel-cli": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.5.2",
     "babel-register": "^6.24.1",
@@ -29,9 +30,10 @@
     "nodemon": "^1.11.0"
   },
   "scripts": {
-    "start": "node bootstrap.js",
-    "start-watch": "nodemon bootstrap.js",
-    "test": "jest",
-    "test-watch": "jest --watch"
+    "start": "nodemon app/server.js --exec babel-node",
+    "test": "jest --watch",
+    "build": "babel app -d dist",
+    "clean": "rm -rf dist",
+    "serve": "node dist/server.js"
   }
 }

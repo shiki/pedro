@@ -17,9 +17,27 @@ https://trello.com/c/sm6c1tf4
 
 ## Commands
 
-### Running Tests
+To run the server for development
+
+```bash
+$ npm start
+```
+
+To run the tests:
 
 ```
-$ npm run-script test-watch
 $ npm test
+```
+
+To build for production
+
+```
+$ npm clean
+$ npm build
+```
+
+To run the production build
+
+```
+$ npm serve
 ```
