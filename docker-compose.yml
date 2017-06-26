@@ -24,6 +24,4 @@ services:
     restart: always
     build:
       context: ./postgres
-    environment:
-      - POSTGRES_PASSWORD=password
 
