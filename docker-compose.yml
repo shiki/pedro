@@ -1,0 +1,29 @@
+# https://hub.docker.com/r/jwilder/nginx-proxy/
+# https://github.com/vincetse/docker-compose-zero-downtime-deployment
+version: '2'
+services: 
+  nginx-proxy: 
+    image: jwilder/nginx-proxy:0.5.0
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  pedro-api:
+    build:
+      context: ./web
+    ports:
+      - "8000"
+    environment:
+      - VIRTUAL_HOST=pedro-api.hivekick.local
+      - VIRTUAL_PORT=80
+
+      - PEDRO_DB_HOSTNAME=postgres
+    links:
+      - postgres
+  postgres:
+    restart: always
+    build:
+      context: ./postgres
+    environment:
+      - POSTGRES_PASSWORD=password
+
