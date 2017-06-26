@@ -34,6 +34,6 @@
     "test": "jest --watch",
     "build": "babel app -d dist",
     "clean": "rm -rf dist",
-    "serve": "node dist/server.js"
+    "serve": "NODE_ENV=production node dist/server.js"
   }
 }

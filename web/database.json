@@ -8,5 +8,12 @@
     "driver": "pg",
     "user": "pedro_hokage",
     "database": "pedro_test"
+  },
+  "production": {
+    "driver": "pg",
+    "host": "postgres",
+    "user": "postgres",
+    "password": "password",
+    "database": "pedro"
   }
 }

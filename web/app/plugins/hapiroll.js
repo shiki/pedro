@@ -7,13 +7,13 @@ export default function register(server, options, next) {
   })
 
   process.on('uncaughtException', err => {
-    console.error(err)
+    console.error('uncaughtException', err)
     rollbar.error(err)
     process.exit(1)
   })
 
   process.on('unhandledRejection', reason => {
-    console.error(reason)
+    console.error('unhandledRejection', reason)
     rollbar.error(reason)
   })
 
