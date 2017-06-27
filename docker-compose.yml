@@ -11,8 +11,6 @@ services:
   pedro-api:
     build:
       context: ./web
-    ports:
-      - "8000"
     environment:
       - VIRTUAL_HOST=pedro-api.hivekick.local
       - VIRTUAL_PORT=80
@@ -24,4 +22,3 @@ services:
     restart: always
     build:
       context: ./postgres
-
