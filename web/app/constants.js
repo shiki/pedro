@@ -1,4 +1,3 @@
-
 // Can be development, production, or test
 const environment = process.env.NODE_ENV || 'development'
 
