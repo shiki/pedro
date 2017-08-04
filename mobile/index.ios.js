@@ -11,6 +11,7 @@ import {
   Text,
   View
 } from 'react-native';
+import { Navigation } from 'react-native-navigation'
 
 export default class Pedro extends Component {
   render() {
@@ -50,4 +51,13 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('Pedro', () => Pedro);
+Navigation.registerComponent('screen.Pedro', () => Pedro)
+
+Navigation.startSingleScreenApp({
+  screen: {
+    screen: 'screen.Pedro',
+    title: 'Pedro Wooo'
+  }
+})
+
+// AppRegistry.registerComponent('Pedro', () => Pedro);
