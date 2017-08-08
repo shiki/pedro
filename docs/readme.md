@@ -13,7 +13,7 @@ https://trello.com/c/sm6c1tf4
 
 ### Editors
 
-* [prettier-eslint](https://www.npmjs.com/package/prettier-eslint) for VS Code. Instructions [here](https://hackernoon.com/configure-eslint-prettier-and-flow-in-vs-code-for-react-development-c9d95db07213) to set it all up
+* [prettier-vscode](https://github.com/prettier/prettier-vscode) for VS Code. Instructions [here](https://hackernoon.com/configure-eslint-prettier-and-flow-in-vs-code-for-react-development-c9d95db07213) to set it all up
 
 ## Commands
 
