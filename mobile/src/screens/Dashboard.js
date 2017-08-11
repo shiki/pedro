@@ -1,16 +1,9 @@
 import React, { Component } from 'react'
 import { ListView, StyleSheet, Text } from 'react-native'
+import { icons } from '../icons'
 
 export default class Dashboard extends Component {
-  constructor() {
-    super()
-
-    const dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
-    this.state = {
-      dataSource: dataSource.cloneWithRows(['row 1', 'row 2'])
-    }
-  }
-
+  static navigatorButtons = {}
   static renderRow(row) {
     console.log('row', row)
     return (
@@ -20,7 +13,40 @@ export default class Dashboard extends Component {
     )
   }
 
+  constructor() {
+    super()
+
+    // console.log('this.props.navigator', this.props.navigator)
+
+    // this.props.navigator.setButtons({
+    //   leftButtons: [
+    //     {
+    //       title: 'Settings'
+    //     }
+    //   ]
+    // })
+
+    const dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
+    this.state = {
+      dataSource: dataSource.cloneWithRows(['row 1', 'row 2'])
+    }
+  }
+
+  componentWillMount() {
+    console.log('componentWillMount', this.props.navigator)
+    this.props.navigator.setButtons({
+      leftButtons: [
+        {
+          title: 'Settings',
+          icon: icons.settings,
+          disableIconTint: true
+        }
+      ]
+    })
+  }
+
   render() {
+    console.log('this.props.navigator', this.props.navigator)
     return (
       <ListView
         style={styles.container}
