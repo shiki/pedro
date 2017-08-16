@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
   operator: {
     fontSize: 20,
     fontFamily: 'Courier New',
+    marginTop: 2,
     marginLeft: 10,
     marginRight: 10
   },
