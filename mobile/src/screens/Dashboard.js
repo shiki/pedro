@@ -1,39 +1,60 @@
 import React, { Component } from 'react'
-import { ListView, StyleSheet, Text } from 'react-native'
+import { View, FlatList, StyleSheet, Text } from 'react-native'
 import { icons } from '../icons'
 
+import DashboardListItem from './DashboardListItem'
+
 export default class Dashboard extends Component {
-  static navigatorButtons = {}
-  static renderRow(row) {
-    console.log('row', row)
-    return (
-      <Text>
-        {row}
-      </Text>
-    )
+  static navigatorStyle = {
+    navBarNoBorder: true
   }
 
-  constructor() {
-    super()
-
-    // console.log('this.props.navigator', this.props.navigator)
-
-    // this.props.navigator.setButtons({
-    //   leftButtons: [
-    //     {
-    //       title: 'Settings'
-    //     }
-    //   ]
-    // })
-
-    const dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
-    this.state = {
-      dataSource: dataSource.cloneWithRows(['row 1', 'row 2'])
-    }
+  static defaultProps = {
+    data: [
+      {
+        uuid: 'a',
+        stock: {
+          symbol: 'MBT',
+          price: 93.67,
+          name: 'Metropolitan Bank & Trust Co.'
+        },
+        price: 103,
+        operator: '>'
+      },
+      {
+        uuid: 'b',
+        stock: {
+          symbol: 'ALI',
+          price: 35.19,
+          name: 'Ayala Land Inc.'
+        },
+        price: 32.61,
+        operator: '<'
+      },
+      {
+        uuid: 'c',
+        stock: {
+          symbol: 'MER',
+          price: '13,610.29',
+          name: 'Lorem ipsum dolor sit amet yada yada lorem ipsum ah nee yoh'
+        },
+        price: '93,632.97',
+        operator: '<'
+      }
+    ]
   }
 
-  componentWillMount() {
-    console.log('componentWillMount', this.props.navigator)
+  static _renderItem({ item }) {
+    return <DashboardListItem data={item} />
+  }
+
+  static _keyExtractor(item, index) {
+    return item.uuid
+  }
+
+  constructor(props) {
+    super(props)
+
     this.props.navigator.setButtons({
       leftButtons: [
         {
@@ -41,25 +62,33 @@ export default class Dashboard extends Component {
           icon: icons.settings,
           disableIconTint: true
         }
+      ],
+      rightButtons: [
+        {
+          title: 'Add',
+          icon: icons.add,
+          disableIconTint: true
+        }
       ]
     })
   }
 
   render() {
-    console.log('this.props.navigator', this.props.navigator)
     return (
-      <ListView
-        style={styles.container}
-        dataSource={this.state.dataSource}
-        renderRow={Dashboard.renderRow}
+      <FlatList
+        style={styles.list}
+        data={this.props.data}
+        extraData={this.state}
+        keyExtractor={Dashboard._keyExtractor}
+        renderItem={Dashboard._renderItem}
       />
     )
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF'
+  list: {
+    flex: 1
+    // backgroundColor: '#F5FCFF'
   }
 })

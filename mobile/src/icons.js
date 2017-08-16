@@ -2,27 +2,28 @@
 // Information about Native Navigation and icons here https://wix.github.io/react-native-navigation/#/third-party-libraries-support
 
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 /**
  * @typedef {Object} Icons
  * @property {object} settings
+ * @property {object} add
  */
 
 /** @type {Icons} */
 export const icons = {}
 
-const iconDefaults = {
-  size: 32,
-  color: '#000000'
-}
-
 const iconConfig = {
   settings: {
-    ...iconDefaults,
     font: SimpleLineIcons,
-    size: 20,
+    size: 20, // This is automatically scaled to @2x. In this case, the image will be 40px
     icon: 'settings',
+    color: '#616161'
+  },
+  add: {
+    font: MaterialIcons,
+    size: 24,
+    icon: 'add-circle-outline',
     color: '#616161'
   }
 }
