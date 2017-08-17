@@ -6,6 +6,10 @@ import Text from '../components/Text'
 export default class DashboardListItem extends Component {
   render() {
     const { data } = this.props
+
+    // prettier-ignore
+    const progress = 1 - (Math.abs(data.stock.price - data.price) / data.price)
+
     return (
       <View style={styles.container}>
         <View style={styles.topContainer}>
@@ -27,7 +31,7 @@ export default class DashboardListItem extends Component {
             {data.price}
           </Text>
         </View>
-        <DashboardListItemBorder />
+        <DashboardListItemBorder progress={progress} />
       </View>
     )
   }

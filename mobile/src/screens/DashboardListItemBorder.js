@@ -2,10 +2,16 @@ import React, { Component } from 'react'
 import { View, StyleSheet, Text } from 'react-native'
 
 export default class DashboardListItemBorder extends Component {
+  static defaultProps = {
+    progress: 0.0
+  }
+
   render() {
+    const { progress } = this.props
+    const width = `${progress * 100}%`
     return (
       <View style={styles.container}>
-        <View style={styles.line} />
+        <View style={styles.line} width={width} />
       </View>
     )
   }
@@ -17,7 +23,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#EDEDED'
   },
   line: {
-    width: '20%',
     flex: 1,
     backgroundColor: '#54C242'
   }

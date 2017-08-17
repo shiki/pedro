@@ -35,10 +35,10 @@ export default class Dashboard extends Component {
         uuid: 'c',
         stock: {
           symbol: 'MER',
-          price: '13,610.29',
+          price: 13610.29,
           name: 'Lorem ipsum dolor sit amet yada yada lorem ipsum ah nee yoh'
         },
-        price: '93,632.97',
+        price: 93632.97,
         operator: '<'
       }
     ]
