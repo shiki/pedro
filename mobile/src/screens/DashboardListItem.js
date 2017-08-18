@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { View, StyleSheet } from 'react-native'
 import DashboardListItemBorder from './DashboardListItemBorder'
+import DashboardListItemDetail from './DashboardListItemDetail'
 import Text from '../components/Text'
 
 export default class DashboardListItem extends Component {
@@ -31,6 +32,7 @@ export default class DashboardListItem extends Component {
             {data.price}
           </Text>
         </View>
+        <DashboardListItemDetail data={data} />
         <DashboardListItemBorder progress={progress} />
       </View>
     )
