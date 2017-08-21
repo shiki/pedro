@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+
 import Text from '../components/Text'
 
 export default class DashboardListItemDetail extends Component {
@@ -19,7 +21,30 @@ export default class DashboardListItemDetail extends Component {
             -0.87%
           </Text>
         </View>
-        <View style={styles.infoContainer} />
+        <View style={styles.infoContainer}>
+          <View style={styles.infoContentContainer}>
+            <Text style={styles.messageText}>
+              The price went above 1,377.81 yesterday, 3:25 PM.
+            </Text>
+            <View style={styles.resetContainer}>
+              <Icon name="error-outline" style={styles.warningIcon} />
+              <Text style={styles.resetMessage}>
+                Reset or change the target price to be notified again.
+              </Text>
+            </View>
+          </View>
+          <View style={styles.actionButtonsContainer}>
+            <TouchableOpacity onPress={() => console.log('pressed')}>
+              <Icon name="refresh" style={styles.actionButtonIcon} />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Icon name="create" style={styles.actionButtonIcon} />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Icon name="delete" style={styles.actionButtonIcon} />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     )
   }
@@ -35,10 +60,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     alignItems: 'flex-end',
     width: 78,
-    paddingTop: 11,
-    paddingBottom: 11,
-    paddingRight: 11,
-    paddingLeft: 11
+    padding: 11
   },
   changeLabel: {
     marginTop: 11
@@ -57,6 +79,40 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flex: 1,
-    backgroundColor: '#FAFAFA'
+    backgroundColor: '#FAFAFA',
+    justifyContent: 'space-between'
+  },
+  infoContentContainer: {
+    padding: 11
+  },
+  messageText: {
+    fontSize: 12
+  },
+  resetContainer: {
+    marginTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  resetMessage: {
+    fontSize: 10,
+    marginLeft: 4,
+    color: '#BDBDBD'
+  },
+  warningIcon: {
+    color: '#BDBDBD',
+    fontSize: 18
+  },
+  actionButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center'
+  },
+  actionButtonIcon: {
+    width: 36,
+    height: 36,
+    fontSize: 20,
+    lineHeight: 36,
+    textAlign: 'center',
+    color: '#757575'
   }
 })
