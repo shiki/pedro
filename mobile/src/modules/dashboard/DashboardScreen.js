@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { View, FlatList, StyleSheet, Text } from 'react-native'
-import { icons } from '../icons'
+import { icons } from '../../icons'
 
-import DashboardListItem from './DashboardListItem'
+import Cell from './components/Cell'
 
-export default class Dashboard extends Component {
+export default class DashboardScreen extends Component {
   static navigatorStyle = {
     navBarNoBorder: true
   }
@@ -45,7 +45,7 @@ export default class Dashboard extends Component {
   }
 
   static _renderItem({ item }) {
-    return <DashboardListItem data={item} />
+    return <Cell data={item} />
   }
 
   static _keyExtractor(item, index) {
@@ -79,8 +79,8 @@ export default class Dashboard extends Component {
         style={styles.list}
         data={this.props.data}
         extraData={this.state}
-        keyExtractor={Dashboard._keyExtractor}
-        renderItem={Dashboard._renderItem}
+        keyExtractor={DashboardScreen._keyExtractor}
+        renderItem={DashboardScreen._renderItem}
       />
     )
   }

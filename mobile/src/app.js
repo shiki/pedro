@@ -1,8 +1,8 @@
 import { Navigation } from 'react-native-navigation'
-import Dashboard from './screens/Dashboard'
-import { icons, loadIcons } from './icons'
+import DashboardScreen from './modules/dashboard/DashboardScreen'
+import { loadIcons } from './icons'
 
-Navigation.registerComponent('screen.Dashboard', () => Dashboard)
+Navigation.registerComponent('screen.Dashboard', () => DashboardScreen)
 
 export default async function bootstrap() {
   await loadIcons()

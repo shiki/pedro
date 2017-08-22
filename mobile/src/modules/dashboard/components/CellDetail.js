@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import Text from '../components/Text'
+import Text from '../../../components/Text'
 
-export default class DashboardListItemDetail extends Component {
+export default class CellDetail extends Component {
   render() {
     const { data } = this.props
     return (

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { View, StyleSheet, Text } from 'react-native'
 
-export default class DashboardListItemBorder extends Component {
+export default class CellBorder extends Component {
   static defaultProps = {
     progress: 0.0
   }
