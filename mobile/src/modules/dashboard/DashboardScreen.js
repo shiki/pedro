@@ -1,47 +1,19 @@
 import React, { Component } from 'react'
-import { View, FlatList, StyleSheet, Text } from 'react-native'
-import { icons } from '../../icons'
+import { FlatList, StyleSheet } from 'react-native'
+import { connect } from 'react-redux'
 
+import { icons } from '../../icons'
 import Cell from './components/Cell'
 
-export default class DashboardScreen extends Component {
+import { loadAlerts } from './actions'
+
+class DashboardScreen extends Component {
   static navigatorStyle = {
     navBarNoBorder: true
   }
 
   static defaultProps = {
-    data: [
-      {
-        uuid: 'a',
-        stock: {
-          symbol: 'MBT',
-          price: 93.67,
-          name: 'Metropolitan Bank & Trust Co.'
-        },
-        price: 103,
-        operator: '>'
-      },
-      {
-        uuid: 'b',
-        stock: {
-          symbol: 'ALI',
-          price: 35.19,
-          name: 'Ayala Land Inc.'
-        },
-        price: 32.61,
-        operator: '<'
-      },
-      {
-        uuid: 'c',
-        stock: {
-          symbol: 'MER',
-          price: 13610.29,
-          name: 'Lorem ipsum dolor sit amet yada yada lorem ipsum ah nee yoh'
-        },
-        price: 93632.97,
-        operator: '<'
-      }
-    ]
+    data: []
   }
 
   static _renderItem({ item }) {
@@ -73,6 +45,10 @@ export default class DashboardScreen extends Component {
     })
   }
 
+  componentWillMount() {
+    this.props.loadAlerts()
+  }
+
   render() {
     return (
       <FlatList
@@ -89,6 +65,15 @@ export default class DashboardScreen extends Component {
 const styles = StyleSheet.create({
   list: {
     flex: 1
-    // backgroundColor: '#F5FCFF'
   }
 })
+
+function mapStateToProps(state, ownProps) {
+  return {
+    data: state.dashboard.list
+  }
+}
+
+export default connect(mapStateToProps, {
+  loadAlerts
+})(DashboardScreen)
