@@ -5,8 +5,6 @@ import { connect } from 'react-redux'
 import { icons } from '../../icons'
 import Cell from './components/Cell'
 
-import { loadAlerts } from './actions'
-
 class DashboardScreen extends Component {
   static navigatorStyle = {
     navBarNoBorder: true
@@ -45,9 +43,7 @@ class DashboardScreen extends Component {
     })
   }
 
-  componentWillMount() {
-    this.props.loadAlerts()
-  }
+  componentWillMount() {}
 
   render() {
     return (
@@ -70,10 +66,8 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state, ownProps) {
   return {
-    data: state.dashboard.list
+    data: state.alerts.list
   }
 }
 
-export default connect(mapStateToProps, {
-  loadAlerts
-})(DashboardScreen)
+export default connect(mapStateToProps)(DashboardScreen)
