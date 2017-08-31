@@ -90,6 +90,10 @@ The server will respond with:
 
 After the sync, the client should update all rows' `synchronized` property to `true`.
 
+## Stocks
+
+The list of stocks can be acquired through `GET /stocks?updated_after=<date>`. This is a read-only endpoint.
+
 ## References
 
 ### Couchbase

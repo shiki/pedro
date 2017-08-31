@@ -92,6 +92,38 @@ Where:
     }
     ```
 
+### `POST /users/self`
+
+For updating the current user's details. Accepted request parameters:
+
+```json
+{
+  "apns_key": "<apns_key>",
+  "updated_at": "<updated_at>"
+}
+```
+
+The above parameters are the only ones allowed to be updated. The response would be a full `User` object:
+
+```json
+{
+  "uuid": "<uuid>",
+  "apns_key": "<apns_key>",
+  "created_at": "<created_at>",
+  "updated_at": "<updated_at>"
+}
+```
+
+### `POST /sync`
+
+For syncing alerts. See [sync.md](sync.md).
+
+### `GET /stocks`
+
+For getting the list of stocks. Accepts parameters:
+
+* `updated_after`. A date string. Only stocks that have been updated after this date should be returned
+
 ## Resources
 
 * This article describes how the OAuth2 workflow works [Mobile API Security Techniques, Part 2](https://hackernoon.com/mobile-api-security-techniques-fc1f577840ab)
