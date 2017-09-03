@@ -3,6 +3,7 @@ import { createLogic } from 'redux-logic'
 import UUIDGenerator from 'react-native-uuid-generator'
 
 import { AUTH_LOAD, AUTH_USER_CHANGED } from '../actions'
+import { toImmutable } from '../db'
 
 const authLogic = createLogic({
   type: AUTH_LOAD,
@@ -37,8 +38,7 @@ const authLogic = createLogic({
       await AsyncStorage.setItem('loggedInUserUUID', uuid)
     }
 
-    console.log('Loaded user', user.uuid)
-    return user
+    return toImmutable(user)
   }
 })
 

@@ -41,16 +41,20 @@ The first step of the sync is the client sending a request containing this:
     ]
   },
   "stocks": {
-    "updated_after": "<date>"
+    "unmodified": [
+      { "symbol": "<symbol>", "updated_at": "<updated_at>" },
+      { "symbol": "<symbol>", "updated_at": "<updated_at>" },
+    ]
   }
 }
 ```
 
-* The `update` list contains new or updated objects that the server should save. Merging is handled by the server. The server should return any objects that have been eventually modified.
-* The `delete` list contains rows that should be deleted on the server.
-* The `unmodified` list is processed by the server after the `update` and the `delete` list. Evaluations:
+* The `alerts.update` list contains new or updated objects that the server should save. Merging is handled by the server. The server should return any objects that have been eventually modified.
+* The `alerts.delete` list contains rows that should be deleted on the server.
+* The `alerts.unmodified` list is processed by the server after the `update` and the `delete` list. Evaluations:
   * If there is a record in here that the server does not have any information on, it should be deleted on the client.
   * If the server has a row that is not in the `unmodified`, `update`, and `delete` list, the row is probably new and was created somewhere else. The server should return this row.
+* The `stocks.unmodified` is the list of stocks that belong to the `alerts`. 
 
 #### `POST /sync` Response
 
@@ -86,7 +90,7 @@ The server will respond with:
   * Once the client receives and processes this list, the client should delete the rows that are `is_deleted` too.
 * The `stocks.updated` list contains:
   * All stocks that belong to all `alerts` belonging to the user. Deleted `alerts` would not be included in here. 
-  * Were updated (`updated_at`) after the date given in the API request's `stocks.updated_after`
+  * Stocks that are not up to date based on the `stocks.unmodified` list
 
 After the sync, the client should update all rows' `synchronized` property to `true`.
 

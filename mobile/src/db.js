@@ -1,6 +1,6 @@
 import Realm from 'realm'
 
-class User {}
+export class User extends Realm.Object {}
 
 User.schema = {
   name: 'User',
@@ -14,7 +14,7 @@ User.schema = {
   }
 }
 
-class Stock {}
+export class Stock extends Realm.Object {}
 
 Stock.schema = {
   name: 'Stock',
@@ -29,7 +29,7 @@ Stock.schema = {
   }
 }
 
-class Alert {}
+export class Alert extends Realm.Object {}
 
 Alert.schema = {
   name: 'Alert',
@@ -42,6 +42,7 @@ Alert.schema = {
     price: { type: 'double' },
     notes: { type: 'string' },
     triggered: { type: 'bool', default: false },
+    triggered_at: { type: 'date', optional: true },
     created_at: { type: 'date' },
     updated_at: { type: 'date' },
     is_deleted: { type: 'bool', default: false },
@@ -58,4 +59,18 @@ export async function loadDB() {
     db.realm = realm
     return db
   })
+}
+
+/**
+ * Realm is not quite compatible with Redux. This function extracts the properties of a Realm.Object instance and returns just a pure 
+ * object.
+ * 
+ * @see https://github.com/realm/realm-js/issues/141
+ * @param {Realm.Object} realmObject 
+ */
+export function toImmutable(realmObject) {
+  return Object.keys(realmObject.constructor.schema.properties).reduce((prev, key) => {
+    prev[key] = realmObject[key]
+    return prev
+  }, {})
 }
