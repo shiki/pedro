@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 
 import dashboardReducer from '../modules/dashboard/dashboardReducer'
-import { AUTH_USER_CHANGED, ALERTS_LOAD_SUCCESS } from '../actions'
+import { SESSION_CHANGED, ALERTS_LOAD_SUCCESS } from '../actions'
 
 const rootReducer = combineReducers({
   dashboard: dashboardReducer,
@@ -11,8 +11,10 @@ const rootReducer = combineReducers({
 
 function sessionReducer(state = {}, action) {
   switch (action.type) {
-    case AUTH_USER_CHANGED:
-      return { ...state, user: action.payload }
+    case SESSION_CHANGED: {
+      const { user, jwt } = action.payload
+      return { ...state, user, jwt }
+    }
     default:
       return state
   }

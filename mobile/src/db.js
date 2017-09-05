@@ -7,6 +7,7 @@ User.schema = {
   primaryKey: 'uuid',
   properties: {
     uuid: { type: 'string' },
+    password: { type: 'string', optional: true },
     apns_key: { type: 'string', optional: true },
     created_at: { type: 'date' },
     updated_at: { type: 'date' },
@@ -69,8 +70,5 @@ export async function loadDB() {
  * @param {Realm.Object} realmObject 
  */
 export function toImmutable(realmObject) {
-  return Object.keys(realmObject.constructor.schema.properties).reduce((prev, key) => {
-    prev[key] = realmObject[key]
-    return prev
-  }, {})
+  return Object.keys(realmObject.constructor.schema.properties).reduce((prev, key) => ({ ...prev, [key]: realmObject[key] }), {})
 }

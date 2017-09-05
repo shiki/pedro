@@ -5,6 +5,8 @@ import { server } from '../../server'
 import { reset } from '../../tests/fixtures'
 import constants from '../../constants'
 
+import { protectPassword, verifyPassword } from '../token'
+
 let request = null
 
 beforeEach(() => {
@@ -20,12 +22,12 @@ test('responds with an error if no params are given', async done => {
 })
 
 test('responds with an error if the parameters are invalid', async done => {
-  const req = { ...request, ...{ payload: { anon_uuid: 'aaa' } } }
+  const req = { ...request, ...{ payload: { uuid: 'aaa' } } }
   let res = await server.inject(req)
   expect(res.statusCode).toBe(400)
   expect(res.result.message).toBe('Missing or invalid uuid')
 
-  req.payload = { anon_uuid: '87b81351-f4a2-4988-ab34-3cca91ee5dfb' }
+  req.payload = { uuid: '87b81351-f4a2-4988-ab34-3cca91ee5dfb', password: 'pw' }
   res = await server.inject(req)
   expect(res.statusCode).toBe(400)
   expect(res.result.message).toBe('Invalid grant_type')
@@ -38,7 +40,8 @@ test('only allows predefined client_id values', async done => {
     ...request,
     ...{
       payload: {
-        anon_uuid: '87b81351-f4a2-4988-ab34-3cca91ee5dfb',
+        uuid: '87b81351-f4a2-4988-ab34-3cca91ee5dfb',
+        password: 'pw',
         grant_type: 'anon',
         client_id: 'invalid'
       }
@@ -49,7 +52,7 @@ test('only allows predefined client_id values', async done => {
   done()
 })
 
-test('creates a new user if the anon_uuid is new', async done => {
+test('creates a new user if the uuid is new', async done => {
   // Arrange
   expect(await db().users.count()).toBe('0')
 
@@ -58,7 +61,8 @@ test('creates a new user if the anon_uuid is new', async done => {
     ...request,
     ...{
       payload: {
-        anon_uuid: '87b81351-f4a2-4988-ab34-3cca91ee5dfb',
+        uuid: '87b81351-f4a2-4988-ab34-3cca91ee5dfb',
+        password: 'pw',
         grant_type: 'anon',
         client_id: constants.clientIds[0]
       }
@@ -88,17 +92,17 @@ test('creates a new user if the anon_uuid is new', async done => {
   done()
 })
 
-test('returns the user with the same anon_uuid', async done => {
+test('returns the user with the same uuid', async done => {
   // Arrange
   const uuid = '87b81351-f4a2-4988-ab34-3cca91ee5dfb'
-  const user = await db().users.insert({ anon_uuid: uuid })
+  const user = await db().users.insert({ uuid, password: await protectPassword('pass') })
   expect(await db().users.count()).toBe('1')
 
   // Act
   const req = {
     ...request,
     ...{
-      payload: { anon_uuid: uuid, grant_type: 'anon', client_id: constants.clientIds[0] }
+      payload: { uuid, password: 'pass', grant_type: 'anon', client_id: constants.clientIds[0] }
     }
   }
   const res = await server.inject(req)
@@ -121,6 +125,28 @@ test('returns the user with the same anon_uuid', async done => {
   expect(userJSON.uuid).toBe(user.uuid)
   expect(userJSON.created_at).toEqual(user.created_at.toJSON())
   expect(userJSON.updated_at).toEqual(user.updated_at.toJSON())
+
+  done()
+})
+
+test('does not return a token if the password does not match', async done => {
+  // Arrange
+  const uuid = '87b81351-f4a2-4988-ab34-3cca91ee5dfb'
+  await db().users.insert({ uuid, password: await protectPassword('pass') })
+  expect(await db().users.count()).toBe('1')
+
+  // Act
+  const req = {
+    ...request,
+    ...{
+      payload: { uuid, password: 'invalid_password', grant_type: 'anon', client_id: constants.clientIds[0] }
+    }
+  }
+  const res = await server.inject(req)
+
+  // Assert
+  expect(res.statusCode).toBe(401)
+  expect(res.result.message).toBe('Invalid credentials')
 
   done()
 })

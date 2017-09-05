@@ -9,6 +9,7 @@
     "no-use-before-define": "off",
     "import/prefer-default-export": "warn",
     "import/no-extraneous-dependencies": "off",
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "max-len": ["error", { "code": 160 }]
   }
 }

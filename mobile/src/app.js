@@ -10,9 +10,9 @@ import DashboardScreen from './modules/dashboard/DashboardScreen'
 import { loadIcons } from './icons'
 import { loadDB } from './db'
 import rootReducer from './reducers/rootReducer'
-import { authLoad } from './actions'
+import { sessionLoad } from './actions'
 
-import authLogic from './logics/authLogic'
+import sessionLogic from './logics/sessionLogic'
 import alertsLogic from './logics/alertsLogic'
 
 export default async function bootstrap() {
@@ -22,7 +22,7 @@ export default async function bootstrap() {
   const store = buildStore({ realm })
   registerScreens(store)
 
-  store.dispatch(authLoad())
+  store.dispatch(sessionLoad())
 
   Navigation.startSingleScreenApp({
     screen: {
@@ -38,7 +38,7 @@ function registerScreens(store) {
 
 function buildStore({ realm }) {
   const logicDeps = { realm }
-  const logics = [authLogic, alertsLogic]
+  const logics = [sessionLogic, alertsLogic]
   const logicMiddleware = createLogicMiddleware(logics, logicDeps)
 
   let middleware = [thunk, logicMiddleware]

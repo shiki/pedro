@@ -65,18 +65,19 @@ Where:
 * [node-jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) will be used for generating web tokens
 * [hapi](https://hapijs.com/) will be used as the main framework
 * No library will be used for OAuth2. We just need to follow the protocol described in the _Process_ section.
-* Unit tests will be written using [Ava](https://github.com/avajs/ava)
 
 ## Endpoints
 
 ### `POST /token`
 
 * Accepts parameters:
-  * `anon_uuid`. A unique identifier. This would most probably be just a random UUID generated from the app. This should be different from `user.uuid` for security.
-  * `grant_type`. Currently accepted is `anon`
+  * `uuid`. The unique id for the user.
+  * `password`. The password for the user. If this is the first time the `uuid` is passed to the server, this will be the permanent `password` for that user. The `password` is a security measure to limit the token creation to the device that created the `user`.
+  * `grant_type`. Currently accepted is `anon`. Technically, a `username` and `password` `grant_type` should be `"password"` but we're leaving some space just in case we wanna go with a `username` and `password` in the future.
   * `client_id`. Will be checked if it's a valid app id
-* If a user exists with the same `anon_uuid`, that user will be returned. If there is no user found, a new user will be created.
-* The `anon_uuid` should not be returned in the JSON
+* If the `uuid` already exists in the server, the `password` will be compared. If not, a new `user` will be created.
+* The `password` cannot be changed for now. 
+* The `password` is not returned in the JSON
 * The returned `access_token` will be logged 
 * Returns:
 

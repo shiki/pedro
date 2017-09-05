@@ -6,6 +6,7 @@
   "author": "Shiki <jayson@basanes.net>",
   "license": "MIT",
   "dependencies": {
+    "argon2": "^0.16.1",
     "db-migrate": "^0.10.0-beta.20",
     "db-migrate-pg": "^0.1.11",
     "hapi": "^16.1.1",

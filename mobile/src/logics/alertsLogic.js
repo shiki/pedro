@@ -1,9 +1,9 @@
 import { createLogic } from 'redux-logic'
 
-import { AUTH_USER_CHANGED, ALERTS_LOAD_SUCCESS } from '../actions'
+import { SESSION_CHANGED, ALERTS_LOAD_SUCCESS } from '../actions'
 
 const alertsLogic = createLogic({
-  type: AUTH_USER_CHANGED,
+  type: SESSION_CHANGED,
 
   processOptions: {
     successType: ALERTS_LOAD_SUCCESS

@@ -3,6 +3,7 @@ import Boom from 'boom'
 import jwt from 'jsonwebtoken'
 import check from 'offensive'
 import mask from 'json-mask'
+import argon2 from 'argon2'
 
 import constants from '../constants'
 import { shared as db } from '../services/db'
@@ -10,7 +11,8 @@ import { shared as db } from '../services/db'
 const config = {
   validate: {
     payload: {
-      anon_uuid: Joi.string().uuid({ version: ['uuidv4'] }).required().error(new Error('Missing or invalid uuid')),
+      uuid: Joi.string().uuid({ version: ['uuidv4'] }).required().error(new Error('Missing or invalid uuid')),
+      password: Joi.string().required().max(128).error(new Error('Missing or invalid password')),
       grant_type: Joi.string().valid('anon').required().error(new Error('Invalid grant_type')),
       client_id: Joi.string().required()
     }
@@ -18,7 +20,7 @@ const config = {
 }
 
 async function handler(request, reply) {
-  const { anon_uuid: anonUUID, client_id: clientId } = request.payload
+  const { uuid, password, client_id: clientId } = request.payload
 
   if (constants.clientIds.indexOf(clientId) < 0) {
     return reply(Boom.unauthorized('Invalid client_id'))
@@ -27,12 +29,18 @@ async function handler(request, reply) {
   let user = null
 
   try {
-    const users = await db().users.find({ anon_uuid: anonUUID })
+    const users = await db().users.find({ uuid })
     if (users.length > 0) {
       check(users.length, 'users.length').is.exactly(1)
       user = users[0]
+
+      const validPassword = await verifyPassword(user.password, password)
+      if (!validPassword) {
+        return reply(Boom.unauthorized('Invalid credentials'))
+      }
     } else {
-      user = await db().users.insert({ anon_uuid: anonUUID })
+      const hash = protectPassword(password)
+      user = await db().users.insert({ uuid, password: hash })
     }
   } catch (e) {
     request.log('error', e)
@@ -55,6 +63,29 @@ function generateToken(user) {
     sub: user.uuid
   }
   return jwt.sign(payload, constants.jwtSecretKey)
+}
+
+/**
+ * Generates a hash of the password. The salt is already included in the result.
+ * 
+ * @see https://gist.github.com/joepie91/7105003c3b26e65efcea63f3db82dfba
+ * @see https://www.owasp.org/index.php/Password_Storage_Cheat_Sheet
+ * 
+ * @param {string} password 
+ * @returns Promise<string>
+ */
+export function protectPassword(password) {
+  return argon2.hash(password)
+}
+
+/**
+ * 
+ * @param {string} hash 
+ * @param {string} password 
+ * @returns Promise<boolean>
+ */
+export function verifyPassword(hash, password) {
+  return argon2.verify(hash, password)
 }
 
 export const create = {
