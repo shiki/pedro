@@ -1,12 +1,12 @@
 {
   "dev": {
     "driver": "pg",
-    "user": "pedro_hokage",
+    "user": "postgres",
     "database": "pedro"
   },
   "test": {
     "driver": "pg",
-    "user": "pedro_hokage",
+    "user": "postgres",
     "database": "pedro_test"
   },
   "production": {
