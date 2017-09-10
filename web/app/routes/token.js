@@ -39,7 +39,7 @@ async function handler(request, reply) {
         return reply(Boom.unauthorized('Invalid credentials'))
       }
     } else {
-      const hash = protectPassword(password)
+      const hash = await protectPassword(password)
       user = await db().users.insert({ uuid, password: hash })
     }
   } catch (e) {

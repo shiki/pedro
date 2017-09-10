@@ -3366,6 +3366,10 @@ object.omit@^2.0.0:
     for-own "^0.1.4"
     is-extendable "^0.1.1"
 
+offensive@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/offensive/-/offensive-0.8.0.tgz#3a5a030c833b130351c13f15724dd8098dbd291a"
+
 on-finished@~2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/on-finished/-/on-finished-2.3.0.tgz#20f1336481b083cd75337992a16971aa2d906947"

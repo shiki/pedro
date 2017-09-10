@@ -11,9 +11,9 @@ import { loadIcons } from './icons'
 import { loadDB } from './db'
 import rootReducer from './reducers/rootReducer'
 import { sessionLoad } from './actions'
+import { encryptPassword, decryptPassword } from './utils'
 
-import sessionLogic from './logics/sessionLogic'
-import alertsLogic from './logics/alertsLogic'
+import logics from './logics'
 
 export default async function bootstrap() {
   await loadIcons()
@@ -38,7 +38,6 @@ function registerScreens(store) {
 
 function buildStore({ realm }) {
   const logicDeps = { realm }
-  const logics = [sessionLogic, alertsLogic]
   const logicMiddleware = createLogicMiddleware(logics, logicDeps)
 
   let middleware = [thunk, logicMiddleware]

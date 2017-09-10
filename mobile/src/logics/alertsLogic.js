@@ -1,9 +1,9 @@
 import { createLogic } from 'redux-logic'
 
-import { SESSION_CHANGED, ALERTS_LOAD_SUCCESS } from '../actions'
+import { SESSION_TOKEN_LOAD_SUCCESS, ALERTS_LOAD_SUCCESS } from '../actions'
 
 const alertsLogic = createLogic({
-  type: SESSION_CHANGED,
+  type: SESSION_TOKEN_LOAD_SUCCESS,
 
   processOptions: {
     successType: ALERTS_LOAD_SUCCESS
