@@ -6,12 +6,15 @@ import mask from 'json-mask'
 import argon2 from 'argon2'
 
 import constants from '../constants'
-import { shared as db } from '../services/db'
+import DB from '../services/DB'
 
 const config = {
   validate: {
     payload: {
-      uuid: Joi.string().uuid({ version: ['uuidv4'] }).required().error(new Error('Missing or invalid uuid')),
+      uuid: Joi.string()
+        .uuid({ version: ['uuidv4'] })
+        .required()
+        .error(new Error('Missing or invalid uuid')),
       password: Joi.string().required().max(128).error(new Error('Missing or invalid password')),
       grant_type: Joi.string().valid('anon').required().error(new Error('Invalid grant_type')),
       client_id: Joi.string().required()
@@ -29,7 +32,7 @@ async function handler(request, reply) {
   let user = null
 
   try {
-    const users = await db().users.find({ uuid })
+    const users = await DB.shared.users.find({ uuid })
     if (users.length > 0) {
       check(users.length, 'users.length').is.exactly(1)
       user = users[0]
@@ -40,7 +43,7 @@ async function handler(request, reply) {
       }
     } else {
       const hash = await protectPassword(password)
-      user = await db().users.insert({ uuid, password: hash })
+      user = await DB.shared.users.insert({ uuid, password: hash })
     }
   } catch (e) {
     request.log('error', e)

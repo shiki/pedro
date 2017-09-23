@@ -1,27 +1,26 @@
 import jwt from 'jsonwebtoken'
 
-import { shared as db } from '../../services/db'
+import DB from '../../services/DB'
 import { server } from '../../server'
-import { reset } from '../../tests/fixtures'
+import fixtures from '../../tests/fixtures'
 import constants from '../../constants'
 
-import { protectPassword, verifyPassword } from '../token'
+import { protectPassword } from '../token'
 
 let request = null
 
 beforeEach(() => {
   request = { method: 'POST', url: '/token' }
-  return reset()
+  return fixtures.reset()
 })
 
-test('responds with an error if no params are given', async done => {
+test('responds with an error if no params are given', async () => {
   const res = await server.inject(request)
   expect(res.statusCode).toBe(400)
   expect(res.result.error).toBe('Bad Request')
-  done()
 })
 
-test('responds with an error if the parameters are invalid', async done => {
+test('responds with an error if the parameters are invalid', async () => {
   const req = { ...request, ...{ payload: { uuid: 'aaa' } } }
   let res = await server.inject(req)
   expect(res.statusCode).toBe(400)
@@ -31,11 +30,9 @@ test('responds with an error if the parameters are invalid', async done => {
   res = await server.inject(req)
   expect(res.statusCode).toBe(400)
   expect(res.result.message).toBe('Invalid grant_type')
-
-  done()
 })
 
-test('only allows predefined client_id values', async done => {
+test('only allows predefined client_id values', async () => {
   const req = {
     ...request,
     ...{
@@ -49,12 +46,11 @@ test('only allows predefined client_id values', async done => {
   }
   const res = await server.inject(req)
   expect(res.statusCode).toBe(401)
-  done()
 })
 
-test('creates a new user if the uuid is new', async done => {
+test('creates a new user if the uuid is new', async () => {
   // Arrange
-  expect(await db().users.count()).toBe('0')
+  expect(await DB.shared.users.count()).toBe('0')
 
   // Act
   const req = {
@@ -74,8 +70,8 @@ test('creates a new user if the uuid is new', async done => {
   // Assert
   const payload = JSON.parse(res.payload)
 
-  expect(await db().users.count()).toBe('1')
-  const user = await db().users.findOne()
+  expect(await DB.shared.users.count()).toBe('1')
+  const user = await DB.shared.users.findOne()
 
   const accessToken = jwt.verify(payload.access_token, constants.jwtSecretKey)
   expect(Object.keys(accessToken)).toEqual(['version', 'sub', 'iat'])
@@ -88,15 +84,13 @@ test('creates a new user if the uuid is new', async done => {
   expect(userJSON.uuid).toBe(user.uuid)
   expect(userJSON.created_at).toEqual(user.created_at.toJSON())
   expect(userJSON.updated_at).toEqual(user.updated_at.toJSON())
-
-  done()
 })
 
-test('returns the user with the same uuid', async done => {
+test('returns the user with the same uuid', async () => {
   // Arrange
   const uuid = '87b81351-f4a2-4988-ab34-3cca91ee5dfb'
-  const user = await db().users.insert({ uuid, password: await protectPassword('pass') })
-  expect(await db().users.count()).toBe('1')
+  const user = await DB.shared.users.insert({ uuid, password: await protectPassword('pass') })
+  expect(await DB.shared.users.count()).toBe('1')
 
   // Act
   const req = {
@@ -112,7 +106,7 @@ test('returns the user with the same uuid', async done => {
   const payload = JSON.parse(res.payload)
 
   // No new user was created
-  expect(await db().users.count()).toBe('1')
+  expect(await DB.shared.users.count()).toBe('1')
 
   const accessToken = jwt.verify(payload.access_token, constants.jwtSecretKey)
   expect(Object.keys(accessToken)).toEqual(['version', 'sub', 'iat'])
@@ -125,21 +119,24 @@ test('returns the user with the same uuid', async done => {
   expect(userJSON.uuid).toBe(user.uuid)
   expect(userJSON.created_at).toEqual(user.created_at.toJSON())
   expect(userJSON.updated_at).toEqual(user.updated_at.toJSON())
-
-  done()
 })
 
-test('does not return a token if the password does not match', async done => {
+test('does not return a token if the password does not match', async () => {
   // Arrange
   const uuid = '87b81351-f4a2-4988-ab34-3cca91ee5dfb'
-  await db().users.insert({ uuid, password: await protectPassword('pass') })
-  expect(await db().users.count()).toBe('1')
+  await DB.shared.users.insert({ uuid, password: await protectPassword('pass') })
+  expect(await DB.shared.users.count()).toBe('1')
 
   // Act
   const req = {
     ...request,
     ...{
-      payload: { uuid, password: 'invalid_password', grant_type: 'anon', client_id: constants.clientIds[0] }
+      payload: {
+        uuid,
+        password: 'invalid_password',
+        grant_type: 'anon',
+        client_id: constants.clientIds[0]
+      }
     }
   }
   const res = await server.inject(req)
@@ -147,6 +144,4 @@ test('does not return a token if the password does not match', async done => {
   // Assert
   expect(res.statusCode).toBe(401)
   expect(res.result.message).toBe('Invalid credentials')
-
-  done()
 })
