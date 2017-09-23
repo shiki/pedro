@@ -7,9 +7,16 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
+      "name": "Launch API",
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/babel-node",
-      "program": "${workspaceRoot}/app/server.js"
+      "program": "${workspaceRoot}/app/api/api.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Gatherer",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/babel-node",
+      "program": "${workspaceRoot}/app/gatherer/gatherer.js"
     }
   ]
 }

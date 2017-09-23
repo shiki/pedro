@@ -1,4 +1,4 @@
-import { server } from '../server'
+import { server } from '../api'
 
 test('/hello', done => {
   const request = {

@@ -1,24 +1,26 @@
-import fetch from 'node-fetch'
-import check from 'offensive'
 import _ from 'lodash'
 import { BigNumber } from 'bignumber.js'
+import check from 'offensive'
+import fetch from 'node-fetch'
 import moment from 'moment'
 
-import DB from '../services/DB'
 import constants from '../constants'
+import DB from '../services/DB'
 
 export const apiUrls = {
   stocks: 'STOCKS_URL'
 }
 
-export async function startGathering() {
+async function start() {
   await DB.bootstrap()
 
   async function run() {
     await gather()
     setTimeout(run, 3000)
   }
+
   run()
+  console.log('Started gatherer')
 }
 
 export async function gather() {
@@ -137,4 +139,10 @@ export function stocksAreEqual(left, right) {
   }
 
   return left.name === right.name
+}
+
+export default { start }
+
+if (!module.parent) {
+  start()
 }

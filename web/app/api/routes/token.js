@@ -5,8 +5,8 @@ import check from 'offensive'
 import mask from 'json-mask'
 import argon2 from 'argon2'
 
-import constants from '../constants'
-import DB from '../services/DB'
+import constants from '../../constants'
+import DB from '../../services/DB'
 
 const config = {
   validate: {

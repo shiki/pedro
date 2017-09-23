@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken'
 
-import DB from '../../services/DB'
-import { server } from '../../server'
-import fixtures from '../../tests/fixtures'
-import constants from '../../constants'
+import DB from '../../../services/DB'
+import { server } from '../../api'
+import fixtures from '../../../tests/fixtures'
+import constants from '../../../constants'
 
 import { protectPassword } from '../token'
 
