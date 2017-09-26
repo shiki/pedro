@@ -17,6 +17,15 @@
       "name": "Launch Gatherer",
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/babel-node",
       "program": "${workspaceRoot}/app/gatherer/gatherer.js"
+    },
+    {
+      // https://facebook.github.io/jest/docs/en/troubleshooting.html
+      "name": "Debug Jest Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": ["--inspect-brk", "${workspaceRoot}/node_modules/.bin/jest", "--watch", "--runInBand"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }

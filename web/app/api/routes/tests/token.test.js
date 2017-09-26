@@ -1,9 +1,8 @@
-import jwt from 'jsonwebtoken'
-
 import DB from '../../../services/DB'
 import { server } from '../../api'
 import fixtures from '../../../tests/fixtures'
 import constants from '../../../constants'
+import { verifyToken } from '../../auth'
 
 import { protectPassword } from '../token'
 
@@ -60,7 +59,7 @@ test('creates a new user if the uuid is new', async () => {
         uuid: '87b81351-f4a2-4988-ab34-3cca91ee5dfb',
         password: 'pw',
         grant_type: 'anon',
-        client_id: constants.clientIds[0]
+        client_id: constants.CLIENT_IDS[0]
       }
     }
   }
@@ -73,8 +72,8 @@ test('creates a new user if the uuid is new', async () => {
   expect(await DB.shared.users.count()).toBe('1')
   const user = await DB.shared.users.findOne()
 
-  const accessToken = jwt.verify(payload.access_token, constants.jwtSecretKey)
-  expect(Object.keys(accessToken)).toEqual(['version', 'sub', 'iat'])
+  const accessToken = verifyToken(payload.access_token)
+  expect(Object.keys(accessToken)).toEqual(['version', 'sub', 'iat', 'iss'])
   expect(accessToken.sub).toBe(user.uuid)
   expect(accessToken.version).toBe('1')
   expect(accessToken.iat).toBeTruthy()
@@ -96,7 +95,7 @@ test('returns the user with the same uuid', async () => {
   const req = {
     ...request,
     ...{
-      payload: { uuid, password: 'pass', grant_type: 'anon', client_id: constants.clientIds[0] }
+      payload: { uuid, password: 'pass', grant_type: 'anon', client_id: constants.CLIENT_IDS[0] }
     }
   }
   const res = await server.inject(req)
@@ -108,8 +107,8 @@ test('returns the user with the same uuid', async () => {
   // No new user was created
   expect(await DB.shared.users.count()).toBe('1')
 
-  const accessToken = jwt.verify(payload.access_token, constants.jwtSecretKey)
-  expect(Object.keys(accessToken)).toEqual(['version', 'sub', 'iat'])
+  const accessToken = verifyToken(payload.access_token)
+  expect(Object.keys(accessToken)).toEqual(['version', 'sub', 'iat', 'iss'])
   expect(accessToken.sub).toBe(user.uuid)
   expect(accessToken.version).toBe('1')
   expect(accessToken.iat).toBeTruthy()
@@ -135,7 +134,7 @@ test('does not return a token if the password does not match', async () => {
         uuid,
         password: 'invalid_password',
         grant_type: 'anon',
-        client_id: constants.clientIds[0]
+        client_id: constants.CLIENT_IDS[0]
       }
     }
   }

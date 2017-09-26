@@ -6,6 +6,7 @@
     "jest": true
   },
   "rules": {
+    "max-len": ["error", 160],
     "semi": ["error", "never"],
     "comma-dangle": ["error", "only-multiline"],
     "arrow-parens": ["error", "as-needed"],

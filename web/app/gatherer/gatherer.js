@@ -91,10 +91,8 @@ export function convertStockFromApiToDbCompatible(fromAPI, asOf) {
   return {
     as_of: asOf,
     name: fromAPI.name,
-    percent_change: new BigNumber(fromAPI.percent_change)
-      .round(constants.number.decimalPlaces)
-      .toFixed(),
-    price: new BigNumber(price.amount).round(constants.number.decimalPlaces).toFixed(),
+    percent_change: new BigNumber(fromAPI.percent_change).round(constants.number.DECIMAL_PLACES).toFixed(),
+    price: new BigNumber(price.amount).round(constants.number.DECIMAL_PLACES).toFixed(),
     symbol: fromAPI.symbol.toUpperCase()
   }
 }

@@ -1,7 +1,7 @@
 // Can be development, production, or test
 const environment = process.env.NODE_ENV || 'development'
 
-const database = (() => {
+const MASSIVE_CONNECTION_INFO = (() => {
   const config = {
     host: 'localhost',
     port: 5432,
@@ -20,13 +20,12 @@ const database = (() => {
 })()
 
 const number = {
-  decimalPlaces: 6
+  DECIMAL_PLACES: 6
 }
 
 export default {
-  clientIds: ['CLIENT_ID'],
-  jwtSecretKey: 'JWT_SECRET_KEY',
-  rollbarAccessToken: 'ROLLBAR_ACCESS_TOKEN',
-  database,
+  CLIENT_IDS: ['CLIENT_ID'],
+  ROLLBAR_ACCESS_TOKEN: 'ROLLBAR_ACCESS_TOKEN',
+  MASSIVE_CONNECTION_INFO,
   number
 }

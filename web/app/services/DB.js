@@ -12,7 +12,7 @@ export default class DB {
       return massive
     }
 
-    massive = Massive(constants.database)
+    massive = Massive(constants.MASSIVE_CONNECTION_INFO)
     return massive.then(instance => {
       database = instance
       return database

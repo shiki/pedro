@@ -3,15 +3,7 @@ import _ from 'lodash'
 import { BigNumber } from 'bignumber.js'
 import moment from 'moment'
 
-import {
-  apiUrls,
-  convertStockFromApiToDbCompatible,
-  fetchStocks,
-  gather,
-  saveStock,
-  stocksAreEqual,
-  filterFetchedStocks
-} from '../gatherer'
+import { apiUrls, convertStockFromApiToDbCompatible, fetchStocks, gather, saveStock, stocksAreEqual, filterFetchedStocks } from '../gatherer'
 import DB from '../../services/DB'
 import fixtures from '../../tests/fixtures'
 
@@ -33,13 +25,7 @@ describe('stock conversion from api to db', () => {
   it('can convert to db-compatible', () => {
     const converted = convertStockFromApiToDbCompatible(fromApi, asOf)
     expect(converted).not.toBeNull()
-    expect(_.sortBy(Object.keys(converted))).toEqual([
-      'as_of',
-      'name',
-      'percent_change',
-      'price',
-      'symbol'
-    ])
+    expect(_.sortBy(Object.keys(converted))).toEqual(['as_of', 'name', 'percent_change', 'price', 'symbol'])
 
     expect(converted.as_of).toBeInstanceOf(Date)
     expect(converted.as_of).toEqual(asOf)
@@ -92,9 +78,7 @@ describe('fetch', () => {
 
   it('returns a pre-processed list of stocks', async () => {
     // Arrange
-    nock(apiUrls.stocks)
-      .get('')
-      .reply(200, fixtures.phisixStocksJSON(), { 'Content-Type': 'application/json' })
+    nock(apiUrls.stocks).get('').reply(200, fixtures.phisixStocksJSON(), { 'Content-Type': 'application/json' })
 
     // Act
     const fetched = await fetchStocks()
@@ -103,13 +87,7 @@ describe('fetch', () => {
     expect(fetched.length).toBeGreaterThan(50)
 
     fetched.forEach(stock => {
-      expect(_.sortBy(Object.keys(stock))).toEqual([
-        'as_of',
-        'name',
-        'percent_change',
-        'price',
-        'symbol'
-      ])
+      expect(_.sortBy(Object.keys(stock))).toEqual(['as_of', 'name', 'percent_change', 'price', 'symbol'])
       expect(stock.as_of).toBeInstanceOf(Date)
       expect(typeof stock.name).toBe('string')
       expect(typeof stock.percent_change).toBe('string')
@@ -135,18 +113,14 @@ describe('fetch', () => {
   })
 
   it('returns null if it fails', async () => {
-    nock(apiUrls.stocks)
-      .get('')
-      .reply(400, fixtures.phisixStocksJSON(), { 'Content-Type': 'application/json' })
+    nock(apiUrls.stocks).get('').reply(400, fixtures.phisixStocksJSON(), { 'Content-Type': 'application/json' })
 
     const fetched = await fetchStocks()
     expect(fetched).toBeNull()
   })
 
   it('returns null if the data is malformed', async () => {
-    nock(apiUrls.stocks)
-      .get('')
-      .reply(200, '{ "stock": { } }', { 'Content-Type': 'application/json' })
+    nock(apiUrls.stocks).get('').reply(200, '{ "stock": { } }', { 'Content-Type': 'application/json' })
 
     const fetched = await fetchStocks()
     expect(fetched).toBeNull()
@@ -266,9 +240,7 @@ describe('gather', () => {
 
   it('fetches and saves the list of stocks', async () => {
     // Arrange
-    nock(apiUrls.stocks)
-      .get('')
-      .reply(200, fixtures.phisixStocksJSON(), { 'Content-Type': 'application/json' })
+    nock(apiUrls.stocks).get('').reply(200, fixtures.phisixStocksJSON(), { 'Content-Type': 'application/json' })
 
     expect(await DB.shared.stocks.count()).toBe('0')
 

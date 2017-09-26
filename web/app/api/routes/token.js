@@ -1,20 +1,18 @@
 import Joi from 'joi'
 import Boom from 'boom'
-import jwt from 'jsonwebtoken'
 import check from 'offensive'
 import mask from 'json-mask'
 import argon2 from 'argon2'
 
 import constants from '../../constants'
 import DB from '../../services/DB'
+import { generateToken } from '../auth'
 
 const config = {
+  auth: false,
   validate: {
     payload: {
-      uuid: Joi.string()
-        .uuid({ version: ['uuidv4'] })
-        .required()
-        .error(new Error('Missing or invalid uuid')),
+      uuid: Joi.string().uuid({ version: ['uuidv4'] }).required().error(new Error('Missing or invalid uuid')),
       password: Joi.string().required().max(128).error(new Error('Missing or invalid password')),
       grant_type: Joi.string().valid('anon').required().error(new Error('Invalid grant_type')),
       client_id: Joi.string().required()
@@ -25,7 +23,7 @@ const config = {
 async function handler(request, reply) {
   const { uuid, password, client_id: clientId } = request.payload
 
-  if (constants.clientIds.indexOf(clientId) < 0) {
+  if (constants.CLIENT_IDS.indexOf(clientId) < 0) {
     return reply(Boom.unauthorized('Invalid client_id'))
   }
 
@@ -57,15 +55,6 @@ async function handler(request, reply) {
   }
 
   return reply(response)
-}
-
-function generateToken(user) {
-  const payload = {
-    // Schema version. I think I can use this to regenerate/improve tokens later
-    version: '1',
-    sub: user.uuid
-  }
-  return jwt.sign(payload, constants.jwtSecretKey)
 }
 
 /**
