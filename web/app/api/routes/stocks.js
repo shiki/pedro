@@ -1,4 +1,7 @@
 import Joi from 'joi'
+import mask from 'json-mask'
+
+import DB from '../../services/DB'
 
 const config = {
   validate: {
@@ -10,8 +13,14 @@ const config = {
 
 async function handler(request, reply) {
   const { updated_after: updatedAfter } = request.query
-
-  return reply({ status: 'ok' })
+  const criteria = updatedAfter ? { 'updated_at >': updatedAfter } : {}
+  const stocks = await DB.shared.stocks.find(criteria)
+  const response = {
+    data: {
+      stocks: mask(stocks, 'symbol,as_of,price,percent_change,updated_at,name')
+    }
+  }
+  return reply(response)
 }
 
 export const stocks = {
