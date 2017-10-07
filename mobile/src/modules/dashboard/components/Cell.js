@@ -17,20 +17,12 @@ export default class Cell extends Component {
           <View style={styles.stockContainer}>
             <Text style={styles.stockSymbol}>
               {data.stock.symbol}
-              <Text style={styles.stockPrice}>
-                &nbsp;{data.stock.price}
-              </Text>
+              <Text style={styles.stockPrice}>&nbsp;{data.stock.price}</Text>
             </Text>
-            <Text style={styles.stockName}>
-              {data.stock.name}
-            </Text>
+            <Text style={styles.stockName}>{data.stock.name}</Text>
           </View>
-          <Text style={styles.operator}>
-            {data.operator}
-          </Text>
-          <Text style={styles.price}>
-            {data.price}
-          </Text>
+          <Text style={styles.operator}>{data.operator}</Text>
+          <Text style={styles.price}>{data.price}</Text>
         </View>
         <CellDetail data={data} />
         <CellBorder progress={progress} />
@@ -66,14 +58,16 @@ const styles = StyleSheet.create({
     color: '#BDBDBD'
   },
   operator: {
+    flex: 1 / 10,
     fontSize: 20,
     fontFamily: 'Courier New',
     marginTop: 2,
     marginLeft: 10,
-    marginRight: 10
+    marginRight: 10,
+    textAlign: 'right'
   },
   price: {
-    flex: 2.5 / 10,
+    flex: 3 / 10,
     fontSize: 20,
     color: '#666666',
     textAlign: 'right'
