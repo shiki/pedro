@@ -11,6 +11,12 @@ https://trello.com/c/sm6c1tf4
 * SinonJS for stubbing http://sinonjs.org/
 * [Offensive](https://github.com/muroc/offensive.js)
 
+## Native iOS
+
+* Found an iOS native library for creating modals like Overcast and Apple Music: [DeckTransition](https://github.com/HarshilShah/DeckTransition?ref=ioscookies.com)
+* http://componentkit.org
+* https://facebook.github.io/yoga/
+
 ### Editors
 
 * [prettier-vscode](https://github.com/prettier/prettier-vscode) for VS Code. Instructions [here](https://hackernoon.com/configure-eslint-prettier-and-flow-in-vs-code-for-react-development-c9d95db07213) to set it all up

@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { FlatList, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 
+import { addButtonPressed } from './actions'
+
 import { icons } from '../../icons'
 import Cell from './components/Cell'
 
@@ -35,15 +37,27 @@ class DashboardScreen extends Component {
       ],
       rightButtons: [
         {
+          id: 'add',
           title: 'Add',
           icon: icons.add,
           disableIconTint: true
         }
       ]
     })
+
+    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
   }
 
   componentWillMount() {}
+
+  onNavigatorEvent(event) {
+    if (event.type === 'NavBarButtonPress') {
+      if (event.id === 'add') {
+        const { navigator } = this.props
+        this.props.addButtonPressed({ navigator })
+      }
+    }
+  }
 
   render() {
     return (
@@ -64,10 +78,8 @@ const styles = StyleSheet.create({
   }
 })
 
-function mapStateToProps(state, ownProps) {
-  return {
-    data: state.alerts.list
-  }
-}
+const mapStateToProps = state => ({
+  data: state.alerts.list
+})
 
-export default connect(mapStateToProps)(DashboardScreen)
+export default connect(mapStateToProps, { addButtonPressed })(DashboardScreen)

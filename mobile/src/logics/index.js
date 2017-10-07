@@ -1,6 +1,5 @@
 import alertsLogic from './alertsLogic'
-import { sessionLoadTokenLogic, sessionLoadUserLogic } from './sessionLogic'
+import sessionLogics from './sessionLogics'
+import dashboardLogics from '../modules/dashboard/logics'
 
-const logics = [alertsLogic, sessionLoadUserLogic, sessionLoadTokenLogic]
-
-export default logics
+export default [alertsLogic, ...sessionLogics, ...dashboardLogics]

@@ -8,14 +8,14 @@ import api from '../api'
 
 import { encryptPassword, decryptPassword } from '../utils'
 
-export const sessionLoadUserLogic = createLogic({
+const sessionLoadUserLogic = createLogic({
   type: SESSION_LOAD_START,
 
   processOptions: {
     successType: SESSION_TOKEN_LOAD_START
   },
 
-  async process({ getState, action, realm }) {
+  async process({ realm }) {
     let user = await (async () => {
       const uuid = await AsyncStorage.getItem('session:uuid')
       return uuid !== null ? realm.objectForPrimaryKey(User.schema.name, uuid) : null
@@ -45,7 +45,7 @@ export const sessionLoadUserLogic = createLogic({
   }
 })
 
-export const sessionLoadTokenLogic = createLogic({
+const sessionLoadTokenLogic = createLogic({
   type: SESSION_TOKEN_LOAD_START,
   latest: true,
 
@@ -53,7 +53,7 @@ export const sessionLoadTokenLogic = createLogic({
     successType: SESSION_TOKEN_LOAD_SUCCESS
   },
 
-  async process({ getState, action, realm }) {
+  async process({ getState }) {
     const token = await AsyncStorage.getItem('session:accessToken')
     if (token !== null) {
       return { token }
@@ -70,3 +70,5 @@ export const sessionLoadTokenLogic = createLogic({
     return { token: accessToken }
   }
 })
+
+export default [sessionLoadUserLogic, sessionLoadTokenLogic]

@@ -9,7 +9,7 @@ const alertsLogic = createLogic({
     successType: ALERTS_LOAD_SUCCESS
   },
 
-  async process({ getState, action, realm }) {
+  async process({ action }) {
     console.log('PROCESSING', action)
     return [
       {
