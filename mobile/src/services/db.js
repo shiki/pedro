@@ -21,11 +21,10 @@ Stock.schema = {
   name: 'Stock',
   primaryKey: 'symbol',
   properties: {
-    symbol: { type: 'string' },
     as_of: { type: 'date' },
-    price: { type: 'double' },
     percent_change: { type: 'double' },
-    created_at: { type: 'date' },
+    price: { type: 'double' },
+    symbol: { type: 'string' },
     updated_at: { type: 'date' }
   }
 }
@@ -51,17 +50,6 @@ Alert.schema = {
   }
 }
 
-const schema = [User, Stock, Alert]
-
-export const db = {}
-
-export async function loadDB() {
-  return Realm.open({ schema }).then(realm => {
-    db.realm = realm
-    return db
-  })
-}
-
 /**
  * Realm is not quite compatible with Redux. This function extracts the properties of a Realm.Object instance and returns just a pure 
  * object.
@@ -71,4 +59,14 @@ export async function loadDB() {
  */
 export function toImmutable(realmObject) {
   return Object.keys(realmObject.constructor.schema.properties).reduce((prev, key) => ({ ...prev, [key]: realmObject[key] }), {})
+}
+
+const schema = [User, Stock, Alert]
+let realm = null
+
+export async function open() {
+  return Realm.open({ schema }).then(realmInstance => {
+    realm = realmInstance
+    return realm
+  })
 }

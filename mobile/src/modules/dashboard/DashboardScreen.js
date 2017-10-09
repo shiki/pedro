@@ -4,10 +4,11 @@ import { connect } from 'react-redux'
 
 import { addButtonPressed } from './actions'
 
-import { icons } from '../../icons'
 import Cell from './components/Cell'
 
-class DashboardScreen extends Component {
+import { icons } from '../../services/icons'
+
+export class Dashboard extends Component {
   static navigatorStyle = {
     navBarNoBorder: true
   }
@@ -16,18 +17,13 @@ class DashboardScreen extends Component {
     data: []
   }
 
-  static _renderItem({ item }) {
-    return <Cell data={item} />
-  }
-
-  static _keyExtractor(item, index) {
-    return item.uuid
-  }
-
   constructor(props) {
     super(props)
 
-    this.props.navigator.setButtons({
+    const { navigator } = this.props
+
+    navigator.setTitle({ title: 'Pedro' })
+    navigator.setButtons({
       leftButtons: [
         {
           title: 'Settings',
@@ -45,10 +41,8 @@ class DashboardScreen extends Component {
       ]
     })
 
-    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
+    navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
   }
-
-  componentWillMount() {}
 
   onNavigatorEvent(event) {
     if (event.type === 'NavBarButtonPress') {
@@ -60,16 +54,16 @@ class DashboardScreen extends Component {
   }
 
   render() {
-    return (
-      <FlatList
-        style={styles.list}
-        data={this.props.data}
-        extraData={this.state}
-        keyExtractor={DashboardScreen._keyExtractor}
-        renderItem={DashboardScreen._renderItem}
-      />
-    )
+    return <FlatList style={styles.list} data={this.props.data} extraData={this.state} keyExtractor={keyExtractor} renderItem={renderItem} />
   }
+}
+
+function renderItem({ item }) {
+  return <Cell data={item} />
+}
+
+function keyExtractor(item, index) {
+  return item.uuid
 }
 
 const styles = StyleSheet.create({
@@ -82,4 +76,4 @@ const mapStateToProps = state => ({
   data: state.alerts.list
 })
 
-export default connect(mapStateToProps, { addButtonPressed })(DashboardScreen)
+export const DashboardScreen = connect(mapStateToProps, { addButtonPressed })(Dashboard)

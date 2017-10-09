@@ -1,12 +1,23 @@
 import { createLogic } from 'redux-logic'
 
-import { SESSION_TOKEN_LOAD_SUCCESS, ALERTS_LOAD_SUCCESS } from '../actions'
+import { ACCESS_TOKEN_FETCH_FULFILLED, ALERTS_FETCH_START, ALERTS_FETCH_FULFILLED, ALERTS_FETCH_REJECTED } from '../types'
 
-const alertsLogic = createLogic({
-  type: SESSION_TOKEN_LOAD_SUCCESS,
+const alertsFetchStartLogic = createLogic({
+  type: ACCESS_TOKEN_FETCH_FULFILLED,
+  processOptions: {
+    successType: ALERTS_FETCH_START
+  },
+  process() {
+    return null
+  }
+})
+
+const alertsFetchLogic = createLogic({
+  type: ALERTS_FETCH_START,
 
   processOptions: {
-    successType: ALERTS_LOAD_SUCCESS
+    successType: ALERTS_FETCH_FULFILLED,
+    failType: ALERTS_FETCH_REJECTED
   },
 
   async process({ action }) {
@@ -46,4 +57,4 @@ const alertsLogic = createLogic({
   }
 })
 
-export default alertsLogic
+export default [alertsFetchStartLogic, alertsFetchLogic]

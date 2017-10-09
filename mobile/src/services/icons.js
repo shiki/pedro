@@ -37,10 +37,8 @@ function getSources([name, { font, icon, size, color }]) {
   return font.getImageSource(icon, size, color).then(src => [name, src])
 }
 
-export async function loadIcons() {
-  const loadedIcons = await Promise.all(Object.entries(iconConfig).map(getSources)).then(
-    entriesToObject
-  )
+export async function load() {
+  const loadedIcons = await Promise.all(Object.entries(iconConfig).map(getSources)).then(entriesToObject)
   Object.assign(icons, loadedIcons)
   return icons
 }
