@@ -21,7 +21,6 @@
     "react-native-uuid-generator": "^2.0.0",
     "react-native-vector-icons": "^4.3.0",
     "react-redux": "^5.0.6",
-    "realm": "^1.10.3",
     "redux": "^3.7.2",
     "redux-logic": "^0.12.2",
     "redux-thunk": "^2.2.0",
