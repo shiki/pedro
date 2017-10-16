@@ -17,4 +17,5 @@
 ## Libraries
 
 * https://wix.github.io/react-native-navigation
+* [react-native-sqlite-storage](https://github.com/andpor/react-native-sqlite-storage)
 

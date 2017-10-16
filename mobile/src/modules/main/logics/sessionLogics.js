@@ -2,7 +2,6 @@ import { AsyncStorage } from 'react-native'
 import { createLogic } from 'redux-logic'
 import UUIDGenerator from 'react-native-uuid-generator'
 
-import { User, toImmutable } from '../../../services/db'
 import * as api from '../../../utils/api'
 import { encrypt, decrypt } from '../../../utils/password'
 
@@ -15,33 +14,26 @@ const sessionLoadUserLogic = createLogic({
     successType: types.SESSION_LOAD_FULFILLED
   },
 
-  async process({ realm }) {
+  async process({ database }) {
     let user = await (async () => {
       const uuid = await AsyncStorage.getItem('session:uuid')
-      return uuid !== null ? realm.objectForPrimaryKey(User.schema.name, uuid) : null
+      return uuid !== null ? database.findUser({ uuid }) : null
     })()
 
     if (user !== null) {
-      return toImmutable(user)
+      return user
     }
 
     const uuid = await UUIDGenerator.getRandomUUID()
     const password = encrypt(await UUIDGenerator.getRandomUUID())
 
-    realm.write(() => {
-      user = realm.create(User.schema.name, {
-        uuid,
-        password,
-        created_at: new Date(),
-        updated_at: new Date(),
-        synchronized: false
-      })
-    })
+    await database.saveUser({ uuid, password })
+    user = await database.findUser({ uuid })
 
     // Set as logged in
     await AsyncStorage.setItem('session:uuid', uuid)
 
-    return toImmutable(user)
+    return user
   }
 })
 

@@ -2,11 +2,13 @@ import { createLogic } from 'redux-logic'
 import moment from 'moment'
 import { BigNumber } from 'bignumber.js'
 
-import { Stock, toImmutable } from '../../../services/db'
 import * as api from '../../../utils/api'
 
 import * as types from '../types'
 import * as actions from '../actions'
+
+// TODO move to constants
+const DECIMAL_PLACES = 6
 
 const stocksFetchStartLogic = createLogic({
   type: types.ACCESS_TOKEN_FETCH_FULFILLED,
@@ -23,46 +25,42 @@ const stocksFetchLogic = createLogic({
   latest: true,
 
   // TODO throw failure if no stocks ever get loaded
-  async process({ getState, realm }, dispatch, done) {
+  async process({ getState, database }, dispatch, done) {
     // If there is no state set yet, load from DB
     if (!getState().stocks.loadedFromDb) {
-      const stocks = realm.objects(Stock.name).map(toImmutable)
+      const stocks = await database.findStocks()
       await dispatch(actions.stocksLoadedFromDb(stocks))
     }
 
-    const stocks = await fetchAndSaveStocks({ getState, realm })
+    const stocks = await fetchAndSaveStocks({ getState, database })
     dispatch(actions.stocksFetchFulfilled(stocks))
     done()
   }
 })
 
-async function fetchAndSaveStocks({ getState, realm }) {
+async function fetchAndSaveStocks({ getState, database }) {
   const { accessToken } = getState().session
-  const updatedAfter = (() => {
-    const stocks = realm.objects(Stock.schema.name).sorted('updated_at', true)
-    return stocks.length > 0 ? stocks[0].updated_after : null
+  const updatedAfter = await (async () => {
+    const lastUpdatedStock = await database.findLastUpdatedStock()
+    return lastUpdatedStock != null ? lastUpdatedStock.updated_at : null
   })()
 
   const fetchedList = await api.getStocks({ accessToken, updatedAfter })
 
-  return fetchedList
-    .map(fetchedStock => {
-      const properties = {
-        as_of: moment(fetchedStock.as_of).toDate(),
-        name: fetchedStock.name,
-        percent_change: new BigNumber(fetchedStock.percent_change).toNumber(),
-        price: new BigNumber(fetchedStock.price).toNumber(),
-        symbol: fetchedStock.symbol,
-        updated_at: moment(fetchedStock.updated_at).toDate()
-      }
+  return fetchedList.map(async fetchedStock => {
+    const properties = {
+      as_of: moment(fetchedStock.as_of).toISOString(),
+      name: fetchedStock.name,
+      percent_change: new BigNumber(fetchedStock.percent_change).toFixed(DECIMAL_PLACES),
+      price: new BigNumber(fetchedStock.price).toFixed(DECIMAL_PLACES),
+      symbol: fetchedStock.symbol,
+      updated_at: moment(fetchedStock.updated_at).toISOString()
+    }
 
-      let saved = null
-      realm.write(() => {
-        saved = realm.create(Stock.schema.name, properties, true)
-      })
-      return saved
-    })
-    .map(toImmutable)
+    await database.saveStock(properties)
+    const saved = await database.findStock({ symbol: properties.symbol })
+    return saved
+  })
 }
 
 export default [stocksFetchStartLogic, stocksFetchLogic]

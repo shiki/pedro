@@ -10,9 +10,9 @@ import registerScreens from './registerScreens'
 
 export default async function bootstrap() {
   await loadIcons()
-  const realm = await openDatabase()
+  const { database } = await openDatabase()
 
-  const store = buildStore({ realm })
+  const store = buildStore({ database })
   registerScreens(store)
 
   return store.dispatch(sessionLoadStart())

@@ -6,8 +6,8 @@ import { createLogicMiddleware } from 'redux-logic'
 import rootReducer from './rootReducer'
 import logics from './logics'
 
-export default function buildStore({ realm }) {
-  const logicDeps = { realm }
+export default function buildStore({ database }) {
+  const logicDeps = { database }
   const logicMiddleware = createLogicMiddleware(logics, logicDeps)
 
   let middleware = [logicMiddleware]

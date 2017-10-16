@@ -12,6 +12,7 @@ const navigationLogic = createLogic({
   process({ action }) {
     switch (action.type) {
       case mainTypes.ACCESS_TOKEN_FETCH_START: {
+        console.log('showing nav')
         Navigation.startSingleScreenApp({
           screen: { screen: screenIDs.DASHBOARD }
         })

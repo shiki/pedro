@@ -1,8 +1,33 @@
 # API
 
-It looks like I have to use OAuth2 and JWT (JSON Web Token). [This page](https://aaronparecki.com/oauth-2-simplified/) has a good summary on how OAuth2 works. Based on that, I can use the _Password Grant Type_. In that `POST /token` endpoint, I can return an access token which can be a JWT that can then be used for normal API requests.
+It looks like I have to use OAuth2 and JWT (JSON Web Token). [This page](https://aaronparecki.com/oauth-2-simplified/) has a good summary on how OAuth2 works. 
+Based on that, I can use the _Password Grant Type_. In that `POST /token` endpoint, I can return an access token which can be a JWT that can then be used for 
+normal API requests.
 
 With the auth workflow process, I don't think I even need to use a third party library.
+
+## Standards
+
+Timestamps should use ISO 8601. This is the [toISOString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString) in 
+JavaScript. Examples:
+
+```
+2017-10-14T13:35:50.503Z
+2017-10-14T14:01:08.051Z
+```
+
+They should also always be in UTC. Data saved in the mobile should also be in UTC.
+
+> The toISOString() method returns a string in simplified extended ISO format (ISO 8601), which is always 24 or 27 characters long (YYYY-MM-DDTHH:mm:ss.sssZ or
+> ±YYYYYY-MM-DDTHH:mm:ss.sssZ, respectively). The timezone is always zero UTC offset, as denoted by the suffix "Z".
+
+In SQLite, this is can be reproduced by:
+
+```sql
+select strftime('%Y-%m-%dT%H:%M:%fZ', 'NOW')
+```
+
+It looks like `strftime()` always returns the date in UTC. More info about the date functions [here](http://www.sqlite.org/lang_datefunc.html). 
 
 ## Process
 
@@ -31,7 +56,8 @@ With the auth workflow process, I don't think I even need to use a third party l
 
 ## Access Tokens (JWT)
 
-We will be using JWT as access tokens since it does not require us to store any access token data on the server at all. This [article](https://medium.com/vandium-software/5-easy-steps-to-understanding-json-web-tokens-jwt-1164c0adfcec) quite simply describes how JWT works.
+We will be using JWT as access tokens since it does not require us to store any access token data on the server at all. This 
+[article](https://medium.com/vandium-software/5-easy-steps-to-understanding-json-web-tokens-jwt-1164c0adfcec) quite simply describes how JWT works.
 
 I should still probably log the generated JWT so I can track possible abuse.
 

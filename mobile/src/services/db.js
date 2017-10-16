@@ -1,72 +1,110 @@
-import Realm from 'realm'
+import SQLite from 'react-native-sqlite-storage'
 
-export class User extends Realm.Object {}
+const SQLITE_ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%fZ'
 
-User.schema = {
-  name: 'User',
-  primaryKey: 'uuid',
-  properties: {
-    uuid: { type: 'string' },
-    password: { type: 'string', optional: true },
-    apns_key: { type: 'string', optional: true },
-    created_at: { type: 'date' },
-    updated_at: { type: 'date' },
-    synchronized: { type: 'bool', default: false }
-  }
-}
+let sqliteDB = null
 
-export class Stock extends Realm.Object {}
-
-Stock.schema = {
-  name: 'Stock',
-  primaryKey: 'symbol',
-  properties: {
-    as_of: { type: 'date' },
-    percent_change: { type: 'double' },
-    price: { type: 'double' },
-    symbol: { type: 'string' },
-    updated_at: { type: 'date' }
-  }
-}
-
-export class Alert extends Realm.Object {}
-
-Alert.schema = {
-  name: 'Alert',
-  primaryKey: 'uuid',
-  properties: {
-    uuid: { type: 'string' },
-    user: { type: 'User' },
-    stock: { type: 'Stock' },
-    operator: { type: 'string' },
-    price: { type: 'double' },
-    notes: { type: 'string' },
-    triggered: { type: 'bool', default: false },
-    triggered_at: { type: 'date', optional: true },
-    created_at: { type: 'date' },
-    updated_at: { type: 'date' },
-    is_deleted: { type: 'bool', default: false },
-    synchronized: { type: 'bool', default: false }
-  }
-}
-
-/**
- * Realm is not quite compatible with Redux. This function extracts the properties of a Realm.Object instance and returns just a pure 
- * object.
- * 
- * @see https://github.com/realm/realm-js/issues/141
- * @param {Realm.Object} realmObject 
- */
-export function toImmutable(realmObject) {
-  return Object.keys(realmObject.constructor.schema.properties).reduce((prev, key) => ({ ...prev, [key]: realmObject[key] }), {})
-}
-
-const schema = [User, Stock, Alert]
-let realm = null
+// SQLite.DEBUG(true)
+SQLite.enablePromise(true)
 
 export async function open() {
-  return Realm.open({ schema }).then(realmInstance => {
-    realm = realmInstance
-    return realm
+  sqliteDB = await SQLite.openDatabase({ name: 'pedro.sqlite', location: 'default' })
+  await migrate(sqliteDB)
+  return { database: new Database() }
+}
+
+async function migrate(db) {
+  await db.transaction(trans => {
+    trans.executeSql(`
+      CREATE TABLE IF NOT EXISTS schema_version (
+        version INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        executed_at TEXT DEFAULT(STRFTIME('${SQLITE_ISO_8601_FORMAT}', 'NOW')) NOT NULL
+      );
+    `)
+
+    trans.executeSql(`
+      CREATE TABLE IF NOT EXISTS users (
+        uuid TEXT PRIMARY KEY,
+        password TEXT,
+        apns_key TEXT,
+        created_at TEXT DEFAULT(STRFTIME('${SQLITE_ISO_8601_FORMAT}', 'NOW')) NOT NULL,
+        updated_at TEXT DEFAULT(STRFTIME('${SQLITE_ISO_8601_FORMAT}', 'NOW')) NOT NULL,
+        synchronized INTEGER DEFAULT(0) NOT NULL
+      );
+    `)
+
+    trans.executeSql(`
+      CREATE TABLE IF NOT EXISTS stocks (
+        symbol TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        as_of TEXT NOT NULL,
+        price TEXT NOT NULL,
+        percent_change TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+    `)
   })
+}
+
+export class XUser {}
+
+export class Database {
+  async findUser({ uuid }) {
+    let user = null
+    await sqliteDB.readTransaction(async trans => {
+      const result = await trans.executeSql('SELECT * FROM users WHERE uuid=?', [uuid])
+      const rows = result[1].rows
+      user = rows.length > 0 ? rows.item(0) : null
+    })
+    return user
+  }
+
+  async saveUser({ uuid, password, apns_key }) {
+    await sqliteDB.transaction(async trans => {
+      const query = 'INSERT OR REPLACE INTO users (uuid, password, apns_key, updated_at) VALUES (?, ?, ?, ?)'
+      const params = [uuid, password, apns_key, new Date().toISOString()]
+      const result = await trans.executeSql(query, params)
+      console.log('result', result)
+    })
+  }
+
+  async findStocks() {
+    let stocks = []
+    await sqliteDB.readTransaction(async trans => {
+      const result = await trans.executeSql('SELECT * FROM stocks')
+      const rows = result[1].rows
+      stocks = rows.raw()
+    })
+    return stocks
+  }
+
+  async findStock({ symbol }) {
+    let stock = null
+    await sqliteDB.readTransaction(async trans => {
+      const result = await trans.executeSql('SELECT * FROM stocks WHERE symbol=?', [symbol])
+      const rows = result[1].rows
+      stock = rows.length > 0 ? rows.item(0) : null
+    })
+    return stock
+  }
+
+  async findLastUpdatedStock() {
+    let stock = null
+    await sqliteDB.readTransaction(async trans => {
+      const result = await trans.executeSql('SELECT * FROM stocks ORDER BY updated_at DESC LIMIT 1')
+      const rows = result[1].rows
+      stock = rows.length > 0 ? rows.item(0) : null
+    })
+    return stock
+  }
+
+  async saveStock({ symbol, name, as_of, price, percent_change, updated_at }) {
+    await sqliteDB.transaction(async trans => {
+      const query = 'INSERT OR REPLACE INTO stocks (symbol, name, as_of, price, percent_change, updated_at) VALUES (?, ?, ?, ?, ?, ?)'
+      const params = [symbol, name, as_of, price, percent_change, updated_at]
+      const result = await trans.executeSql(query, params)
+      console.log('result', result)
+    })
+  }
 }
