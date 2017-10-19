@@ -10,7 +10,8 @@ import registerScreens from './registerScreens'
 
 export default async function bootstrap() {
   await loadIcons()
-  const { database } = await openDatabase()
+
+  const { client: database } = await openDatabase()
 
   const store = buildStore({ database })
   registerScreens(store)

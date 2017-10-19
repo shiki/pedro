@@ -1,16 +1,18 @@
 import SQLite from 'react-native-sqlite-storage'
 
+import { database as databaseConfig } from '../config'
+
 const SQLITE_ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%fZ'
 
-let sqliteDB = null
-
-// SQLite.DEBUG(true)
+SQLite.DEBUG(databaseConfig.DEBUG)
 SQLite.enablePromise(true)
+
+let sqliteDB = null
 
 export async function open() {
   sqliteDB = await SQLite.openDatabase({ name: 'pedro.sqlite', location: 'default' })
   await migrate(sqliteDB)
-  return { database: new Database() }
+  return { client }
 }
 
 async function migrate(db) {
@@ -47,9 +49,7 @@ async function migrate(db) {
   })
 }
 
-export class XUser {}
-
-export class Database {
+const client = {
   async findUser({ uuid }) {
     let user = null
     await sqliteDB.readTransaction(async trans => {
@@ -58,7 +58,7 @@ export class Database {
       user = rows.length > 0 ? rows.item(0) : null
     })
     return user
-  }
+  },
 
   async saveUser({ uuid, password, apns_key }) {
     await sqliteDB.transaction(async trans => {
@@ -67,7 +67,7 @@ export class Database {
       const result = await trans.executeSql(query, params)
       console.log('result', result)
     })
-  }
+  },
 
   async findStocks() {
     let stocks = []
@@ -77,7 +77,7 @@ export class Database {
       stocks = rows.raw()
     })
     return stocks
-  }
+  },
 
   async findStock({ symbol }) {
     let stock = null
@@ -87,7 +87,7 @@ export class Database {
       stock = rows.length > 0 ? rows.item(0) : null
     })
     return stock
-  }
+  },
 
   async findLastUpdatedStock() {
     let stock = null
@@ -97,7 +97,7 @@ export class Database {
       stock = rows.length > 0 ? rows.item(0) : null
     })
     return stock
-  }
+  },
 
   async saveStock({ symbol, name, as_of, price, percent_change, updated_at }) {
     await sqliteDB.transaction(async trans => {

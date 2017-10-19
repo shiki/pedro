@@ -2,13 +2,11 @@ import { createLogic } from 'redux-logic'
 import moment from 'moment'
 import { BigNumber } from 'bignumber.js'
 
+import { number as numberConfig } from '../../../config'
 import * as api from '../../../utils/api'
 
 import * as types from '../types'
 import * as actions from '../actions'
-
-// TODO move to constants
-const DECIMAL_PLACES = 6
 
 const stocksFetchStartLogic = createLogic({
   type: types.ACCESS_TOKEN_FETCH_FULFILLED,
@@ -51,8 +49,8 @@ async function fetchAndSaveStocks({ getState, database }) {
     const properties = {
       as_of: moment(fetchedStock.as_of).toISOString(),
       name: fetchedStock.name,
-      percent_change: new BigNumber(fetchedStock.percent_change).toFixed(DECIMAL_PLACES),
-      price: new BigNumber(fetchedStock.price).toFixed(DECIMAL_PLACES),
+      percent_change: new BigNumber(fetchedStock.percent_change).toFixed(numberConfig.DECIMAL_PLACES),
+      price: new BigNumber(fetchedStock.price).toFixed(numberConfig.DECIMAL_PLACES),
       symbol: fetchedStock.symbol,
       updated_at: moment(fetchedStock.updated_at).toISOString()
     }
