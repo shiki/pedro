@@ -11,26 +11,27 @@ export class StockSelection extends Component {
     navBarNoBorder: true
   }
 
-  static defaultProps = {
-    stocks: []
-  }
+  // static defaultProps = {
+  //   stocks: []
+  // }
 
-  componentWillMount() {
-    this.props.stocksFetchStart()
-  }
+  // componentWillMount() {
+  // this.props.stocksFetchStart()
+  // }
 
   render() {
-    return <FlatList style={styles.list} data={this.props.stocks} extraData={this.state} keyExtractor={keyExtractor} renderItem={renderItem} />
+    return <View style={styles.list} />
+    // return <FlatList style={styles.list} data={this.props.stocks} extraData={this.state} keyExtractor={keyExtractor} renderItem={renderItem} />
   }
 }
 
-function keyExtractor(item, index) {
-  return item.symbol
-}
+// function keyExtractor(item, index) {
+//   return item.symbol
+// }
 
-function renderItem({ item }) {
-  return <Text>{item.symbol}</Text>
-}
+// function renderItem({ item }) {
+//   return <Text>{item.symbol}</Text>
+// }
 
 const styles = StyleSheet.create({
   list: {
@@ -39,6 +40,11 @@ const styles = StyleSheet.create({
   }
 })
 
-const mapStateToProps = () => ({})
+// const mapStateToProps = state => ({ stocks: state.stocks.list })
+// const mapDispatchToProps = { stocksFetchStart }
 
-export const StockSelectionScreen = connect(mapStateToProps, { stocksFetchStart })(StockSelection)
+// const mapStateToProps = state => ({})
+// const mapDispatchToProps = {}
+
+export const StockSelectionScreen = connect()(StockSelection)
+// export const StockSelectionScreen = connect(mapStateToProps, mapDispatchToProps)(StockSelection)

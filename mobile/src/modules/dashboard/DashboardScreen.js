@@ -35,6 +35,7 @@ export class Dashboard extends Component {
         {
           id: 'add',
           title: 'Add',
+          testID: 'add_alert',
           icon: icons.add,
           disableIconTint: true
         }

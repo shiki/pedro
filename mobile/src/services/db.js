@@ -49,7 +49,14 @@ async function migrate(db) {
   })
 }
 
-const client = {
+export const client = {
+  async deleteAll() {
+    await sqliteDB.transaction(async trans => {
+      trans.executeSql('DELETE FROM stocks')
+      trans.executeSql('DELETE FROM users')
+    })
+  },
+
   async findUser({ uuid }) {
     let user = null
     await sqliteDB.readTransaction(async trans => {

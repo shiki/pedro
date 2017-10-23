@@ -19,3 +19,6 @@
 * https://wix.github.io/react-native-navigation
 * [react-native-sqlite-storage](https://github.com/andpor/react-native-sqlite-storage)
 
+## Tips
+
+* [Handling UI side effects in redux-logic](https://github.com/jeffbski/redux-logic/issues/29)

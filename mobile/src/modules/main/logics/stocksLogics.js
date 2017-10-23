@@ -45,20 +45,22 @@ async function fetchAndSaveStocks({ getState, database }) {
 
   const fetchedList = await api.getStocks({ accessToken, updatedAfter })
 
-  return fetchedList.map(async fetchedStock => {
-    const properties = {
-      as_of: moment(fetchedStock.as_of).toISOString(),
-      name: fetchedStock.name,
-      percent_change: new BigNumber(fetchedStock.percent_change).toFixed(numberConfig.DECIMAL_PLACES),
-      price: new BigNumber(fetchedStock.price).toFixed(numberConfig.DECIMAL_PLACES),
-      symbol: fetchedStock.symbol,
-      updated_at: moment(fetchedStock.updated_at).toISOString()
-    }
+  return Promise.all(
+    fetchedList.map(async fetchedStock => {
+      const properties = {
+        as_of: moment(fetchedStock.as_of).toISOString(),
+        name: fetchedStock.name,
+        percent_change: new BigNumber(fetchedStock.percent_change).toFixed(numberConfig.DECIMAL_PLACES),
+        price: new BigNumber(fetchedStock.price).toFixed(numberConfig.DECIMAL_PLACES),
+        symbol: fetchedStock.symbol,
+        updated_at: moment(fetchedStock.updated_at).toISOString()
+      }
 
-    await database.saveStock(properties)
-    const saved = await database.findStock({ symbol: properties.symbol })
-    return saved
-  })
+      await database.saveStock(properties)
+      const saved = await database.findStock({ symbol: properties.symbol })
+      return saved
+    })
+  )
 }
 
 export default [stocksFetchStartLogic, stocksFetchLogic]

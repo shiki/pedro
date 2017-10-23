@@ -16,5 +16,7 @@ export default async function bootstrap() {
   const store = buildStore({ database })
   registerScreens(store)
 
-  return store.dispatch(sessionLoadStart())
+  require('../integrationTests/IntegrationTestsApp')
+
+  // return store.dispatch(sessionLoadStart())
 }

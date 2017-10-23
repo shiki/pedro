@@ -6,7 +6,9 @@
     "start": "react-native start",
     "ios": "react-native run-ios",
     "start:ios": "concurrently -r 'react-native start' 'react-native run-ios'",
-    "test": "jest"
+    "test": "jest",
+    "test:e2e": "jest e2e",
+    "test:e2e:build": "detox build"
   },
   "dependencies": {
     "bignumber.js": "^4.1.0",
@@ -30,18 +32,32 @@
     "babel-eslint": "^7.2.3",
     "babel-jest": "20.0.3",
     "babel-preset-react-native": "2.1.0",
+    "chai": "^4.1.2",
     "concurrently": "^3.5.0",
+    "detox": "^5.9.0",
     "eslint": "^4.3.0",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.1.0",
-    "jest": "20.0.4",
+    "jest": "^21.2.1",
     "react-test-renderer": "16.0.0-alpha.12",
     "redux-immutable-state-invariant": "^2.0.0",
     "redux-logger": "^3.0.6"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "setupTestFrameworkScriptFile": "./e2e/init.js"
+  },
+  "detox": {
+    "runner": "jest",
+    "configurations": {
+      "ios.sim.debug": {
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/Pedro.app",
+        "build": "xcodebuild -project ios/Pedro.xcodeproj -scheme Pedro -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+        "type": "ios.simulator",
+        "name": "iPhone 7"
+      }
+    }
   }
 }
