@@ -18,20 +18,13 @@ export default function db(test) {
 
     let savedUser = await client.findUser({ uuid: user.uuid })
     expect(savedUser).to.be.null
-    // assertTrue(savedUser === null, 'user should not exist yet')
 
     await client.saveUser(user)
     savedUser = await client.findUser({ uuid: user.uuid })
     expect(savedUser).not.to.be.null
-    // assertTrue(savedUser !== null)
+    expect(savedUser.password).to.eq(user.password)
+    expect(savedUser.apns_key).to.be.null
+    expect(savedUser.created_at).not.to.be.null
+    expect(savedUser.synchronized).to.eq(0)
   })
-
-  // it('works', () => {
-  //   console.log('i am from db.test.js')
-  //   assertTrue(false)
-  // })
-
-  // it('does not work', () => {
-  //   assertTrue(false)
-  // })
 }

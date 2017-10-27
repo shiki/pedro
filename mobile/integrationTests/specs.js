@@ -1,3 +1,3 @@
-const SPECS = [require('./db.spec').default]
+import * as ids from './specIDs'
 
-export default SPECS.map(spec => ({ name: spec.name, fn: spec })).filter(spec => spec.name.length > 0)
+export default [{ id: ids.DB, fn: require('./db.spec').default }]

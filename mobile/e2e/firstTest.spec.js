@@ -1,4 +1,4 @@
-import specs from '../integrationTests/specs'
+import specIDs from '../integrationTests/specIDs'
 
 import { FINISHED_SUCCESS_MESSAGE } from '../integrationTests/constants'
 
@@ -35,18 +35,22 @@ describe('integration tests', () => {
   //   // await expect(element(by.id('welcome'))).toBeVisible()
   // })
 
-  specs.forEach(spec => {
-    it(spec.name, async () => {
-      const cell = element(by.id(spec.name))
+  specIDs.forEach(specID => {
+    it(specID, async () => {
+      const cell = element(by.id(specID))
       await expect(cell).toExist()
       await cell.tap()
 
-      const successTextEl = element(by.text(FINISHED_SUCCESS_MESSAGE))
-      await expect(successTextEl).toExist()
-
-      const closeButton = element(by.id('closeButton'))
-      await expect(closeButton).toBeVisible()
-      await closeButton.tap()
+      try {
+        const successTextEl = element(by.text(FINISHED_SUCCESS_MESSAGE))
+        await expect(successTextEl).toExist()
+      } catch (e) {
+        if (e.message.indexOf('Cannot find UI Element') >= 0) {
+          throw Error('Failed')
+        } else {
+          throw e
+        }
+      }
     })
   })
 })

@@ -16,8 +16,8 @@ export default class IntegrationTestsApp extends Component {
   renderItem({ item: spec }) {
     console.log('renderItem', spec)
     return (
-      <TouchableOpacity testID={spec.name} style={styles.row} onPress={() => this.setState({ activeSpec: spec })}>
-        <Text style={styles.testName}>{spec.name}</Text>
+      <TouchableOpacity testID={spec.id} style={styles.row} onPress={() => this.setState({ activeSpec: spec })}>
+        <Text style={styles.testName}>{spec.id}</Text>
         <View style={styles.separator} />
       </TouchableOpacity>
     )

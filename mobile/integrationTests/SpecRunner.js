@@ -4,8 +4,8 @@ import { Button, View, Text, FlatList, StyleSheet } from 'react-native'
 import { FINISHED_SUCCESS_MESSAGE } from './constants'
 
 class Runner {
-  constructor({ name, fn, onInfo, onError }) {
-    this.specName = name
+  constructor({ id, fn, onInfo, onError }) {
+    this.specID = id
     this.specFn = fn
     this.onInfo = onInfo
     this.onError = onError
@@ -71,7 +71,7 @@ export default class SpecRunner extends Component {
   }
 
   componentDidMount() {
-    const { name, fn } = this.props.spec
+    const { id, fn } = this.props.spec
 
     const onInfo = message => {
       const messages = [...this.state.messages, { type: 'info', message }]
@@ -83,7 +83,7 @@ export default class SpecRunner extends Component {
     }
 
     setTimeout(async () => {
-      const runner = new Runner({ name, fn, onInfo, onError })
+      const runner = new Runner({ id, fn, onInfo, onError })
       const failed = await runner.run()
       if (failed) {
         const messages = [...this.state.messages, { type: 'doneSuccess', message: FINISHED_SUCCESS_MESSAGE }]

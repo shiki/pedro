@@ -8,6 +8,8 @@ import { sessionLoadStart } from './modules/main/actions'
 import buildStore from './buildStore'
 import registerScreens from './registerScreens'
 
+import { shouldRunIntegrationApp } from './config'
+
 export default async function bootstrap() {
   await loadIcons()
 
@@ -16,7 +18,10 @@ export default async function bootstrap() {
   const store = buildStore({ database })
   registerScreens(store)
 
-  require('../integrationTests/IntegrationTestsApp')
+  if (shouldRunIntegrationApp()) {
+    require('../integrationTests/IntegrationTestsApp')
+    return null
+  }
 
-  // return store.dispatch(sessionLoadStart())
+  return store.dispatch(sessionLoadStart())
 }

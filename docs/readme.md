@@ -31,9 +31,11 @@ https://trello.com/c/sm6c1tf4
 
 ## Commands
 
+### Server
+
 To run the server for development
 
-```bash
+```
 $ npm start
 ```
 
@@ -54,4 +56,27 @@ To run the production build
 
 ```
 $ npm serve
+```
+
+### Mobile
+
+Run the integration tests:
+
+```
+$ yarn run start
+$ yarn run test:e2e:build
+$ yarn run test:e2e
+```
+
+Run the app normally:
+
+```
+$ yarn run start
+$ yarn run ios
+```
+
+or to run both at the same time:
+
+```
+$ yarn run start:ios
 ```
