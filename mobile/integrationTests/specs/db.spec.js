@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { client } from '../src/services/db'
+import { client } from '../../src/services/db'
 
 export default function db(test) {
   const { beforeEach, it } = test

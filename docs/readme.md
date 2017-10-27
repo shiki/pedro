@@ -64,8 +64,8 @@ Run the integration tests:
 
 ```
 $ yarn run start
-$ yarn run test:e2e:build
-$ yarn run test:e2e
+$ yarn run it:build
+$ yarn run it
 ```
 
 Run the app normally:

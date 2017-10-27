@@ -4,7 +4,7 @@ import { Navigation } from 'react-native-navigation'
 
 import SpecRunner from './SpecRunner'
 
-import specs from './specs'
+import specs from '../specs'
 
 export default class IntegrationTestsApp extends Component {
   state = { specs }

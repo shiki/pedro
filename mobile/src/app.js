@@ -19,7 +19,7 @@ export default async function bootstrap() {
   registerScreens(store)
 
   if (shouldRunIntegrationApp()) {
-    require('../integrationTests/IntegrationTestsApp')
+    require('../integrationTests/lib/IntegrationTestsApp')
     return null
   }
 
