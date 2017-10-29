@@ -1,6 +1,10 @@
-import { expect } from 'chai'
+/* eslint-disable no-unused-expressions */
 
-import { client } from '../../src/services/db'
+import moment from 'moment'
+import { expect } from 'chai'
+import { BigNumber } from 'bignumber.js'
+
+import { client, User, Stock } from '../../src/services/db'
 
 export default function db(test) {
   const { beforeEach, it } = test
@@ -10,21 +14,149 @@ export default function db(test) {
   })
 
   it('can save a user', async () => {
-    const user = {
-      uuid: '_temp_',
-      password: '_pass_',
-      apns_key: null
-    }
+    // Arrange
+    const user = new User({ uuid: '__temp__', password: '__pass__' })
 
     let savedUser = await client.findUser({ uuid: user.uuid })
     expect(savedUser).to.be.null
 
+    // Act
     await client.saveUser(user)
+
+    // Assert
     savedUser = await client.findUser({ uuid: user.uuid })
     expect(savedUser).not.to.be.null
+    expect(savedUser).to.be.instanceOf(User)
     expect(savedUser.password).to.eq(user.password)
     expect(savedUser.apns_key).to.be.null
-    expect(savedUser.created_at).not.to.be.null
-    expect(savedUser.synchronized).to.eq(0)
+    expect(savedUser.created_at).to.be.instanceOf(moment)
+    expect(savedUser.updated_at).to.be.instanceOf(moment)
+    expect(savedUser.synchronized).to.eq(false)
+  })
+
+  it('overwrites a user with the same uuid', async () => {
+    // Arrange
+    const user = new User({ uuid: '__temp__', password: '__pass__' })
+    await client.saveUser(user)
+
+    // Act
+    user.password = 'word'
+    await client.saveUser(user)
+
+    // Assert
+    const savedUser = await client.findUser({ uuid: user.uuid })
+    expect(savedUser.password).to.eq('word')
+  })
+
+  it('can find a user', async () => {
+    // Arrange
+    await client.saveUser(new User({ uuid: '__temp__', password: 'p' }))
+    await client.saveUser(new User({ uuid: 'find_me', password: '__pass__' }))
+
+    // Act
+    const user = await client.findUser({ uuid: 'find_me' })
+
+    // Assert
+    expect(user).to.be.instanceOf(User)
+    expect(user.uuid).to.eq('find_me')
+    expect(user.password).to.eq('__pass__')
+  })
+
+  it('can save a stock', async () => {
+    // Arrange
+    const stock = new Stock({
+      symbol: 'AP',
+      name: 'Aboitiz',
+      as_of: moment()
+        .add(-2, 'days')
+        .startOf('day'),
+      price: new BigNumber(301.123456),
+      percent_change: new BigNumber(220.451),
+      updated_at: moment()
+        .add(-1, 'days')
+        .startOf('day')
+    })
+
+    let savedStock = await client.findStock({ symbol: stock.symbol })
+    expect(savedStock).to.be.null
+
+    // Act
+    await client.saveStock(stock)
+
+    // Assert
+    savedStock = await client.findStock({ symbol: stock.symbol })
+    expect(savedStock).not.to.be.null
+    expect(savedStock).to.be.instanceOf(Stock)
+    expect(savedStock.name).to.eq(stock.name)
+    expect(savedStock.as_of.isSame(stock.as_of)).to.be.true
+    expect(savedStock.as_of).to.be.instanceOf(moment)
+    expect(savedStock.price.toString()).to.eq('301.123456')
+    expect(savedStock.percent_change.toString()).to.eq('220.451')
+    expect(savedStock.updated_at).to.be.instanceOf(moment)
+    expect(savedStock.updated_at.isSame(stock.updated_at)).to.be.true
+
+    expect(moment().isAfter(savedStock.as_of)).to.be.true
+    expect(moment().isAfter(savedStock.updated_at)).to.be.true
+  })
+
+  it('overwrites a stock with the same symbol', async () => {
+    // Arrange
+    const stock = new Stock({
+      symbol: 'AP',
+      name: 'Aboitiz',
+      as_of: moment()
+        .add(-2, 'days')
+        .startOf('day'),
+      price: new BigNumber(301.123456),
+      percent_change: new BigNumber(220.451),
+      updated_at: moment()
+        .add(-1, 'days')
+        .startOf('day')
+    })
+    await client.saveStock(stock)
+
+    // Act
+    stock.name = 'Aboitiz Power'
+    await client.saveStock(stock)
+
+    // Assert
+    const savedStock = await client.findStock({ symbol: 'AP' })
+    expect(savedStock.symbol).to.eq('AP')
+    expect(savedStock.name).to.eq('Aboitiz Power')
+  })
+
+  it('can find the last updated stock', async () => {
+    // Arrange
+    const ap = new Stock({
+      symbol: 'AP',
+      name: 'Aboitiz',
+      as_of: moment(),
+      price: new BigNumber(301.123456),
+      percent_change: new BigNumber(220.451),
+      updated_at: moment()
+    })
+    await client.saveStock(ap)
+
+    const mer = new Stock({
+      symbol: 'MER',
+      name: 'Meralco',
+      as_of: moment(),
+      price: new BigNumber(301.123456),
+      percent_change: new BigNumber(220.451),
+      updated_at: moment().add(-1, 'days')
+    })
+    await client.saveStock(mer)
+
+    // Act
+    const lastUpdated = await client.findLastUpdatedStock()
+
+    // Assert
+    expect(lastUpdated).not.to.be.null
+    expect(lastUpdated.symbol).to.eq(ap.symbol)
+  })
+
+  it('findLatestUpdatedStock returns null if there are no stocks', async () => {
+    const lastUpdated = await client.findLastUpdatedStock()
+    expect(lastUpdated).to.be.null
   })
 }

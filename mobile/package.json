@@ -6,8 +6,8 @@
     "start": "react-native start",
     "ios": "react-native run-ios",
     "start:ios": "concurrently -r 'react-native start' 'react-native run-ios'",
-    "test": "jest",
-    "it": "jest integrationTests/lib",
+    "test": "jest ",
+    "it": "jest --setupTestFrameworkScriptFile=./integrationTests/lib/init.js integrationTests/lib",
     "it:build": "detox build"
   },
   "dependencies": {
@@ -47,8 +47,7 @@
     "redux-logger": "^3.0.6"
   },
   "jest": {
-    "preset": "react-native",
-    "setupTestFrameworkScriptFile": "./integrationTests/lib/init.js"
+    "preset": "react-native"
   },
   "detox": {
     "runner": "jest",

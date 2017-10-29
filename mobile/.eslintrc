@@ -10,6 +10,7 @@
     "comma-dangle": ["error", "only-multiline"],
     "arrow-parens": ["error", "as-needed"],
     "no-use-before-define": "off",
+    "camelcase": "off",
     "import/prefer-default-export": "warn",
     "import/no-extraneous-dependencies": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],

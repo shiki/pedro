@@ -1,6 +1,9 @@
 import SQLite from 'react-native-sqlite-storage'
 
-import { database as databaseConfig } from '../config'
+import { database as databaseConfig } from '../../config'
+
+import User from './User'
+import Stock from './Stock'
 
 const SQLITE_ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%fZ'
 
@@ -49,6 +52,16 @@ async function migrate(db) {
   })
 }
 
+/**
+ * @param {int} count 
+ * @return {string}
+ */
+function createQueryPlaceholders(count) {
+  return Array(count)
+    .fill('?')
+    .join(',')
+}
+
 export const client = {
   async deleteAll() {
     await sqliteDB.transaction(async trans => {
@@ -57,61 +70,85 @@ export const client = {
     })
   },
 
+  /**
+   * @param {Object} params
+   * @param {string} params.uuid
+   * @return {User|null}
+   */
   async findUser({ uuid }) {
     let user = null
     await sqliteDB.readTransaction(async trans => {
       const result = await trans.executeSql('SELECT * FROM users WHERE uuid=?', [uuid])
       const rows = result[1].rows
-      user = rows.length > 0 ? rows.item(0) : null
+      user = rows.length > 0 ? User.fromDB(rows.item(0)) : null
     })
     return user
   },
 
-  async saveUser({ uuid, password, apns_key }) {
+  /**
+   * @param {User} user 
+   */
+  async saveUser(user) {
     await sqliteDB.transaction(async trans => {
-      const query = 'INSERT OR REPLACE INTO users (uuid, password, apns_key, updated_at) VALUES (?, ?, ?, ?)'
-      const params = [uuid, password, apns_key, new Date().toISOString()]
-      const result = await trans.executeSql(query, params)
-      console.log('result', result)
+      const forDB = User.toDB(user)
+      const keys = Object.keys(forDB)
+      const query = `INSERT OR REPLACE INTO users (${keys.join(',')}) VALUES (${createQueryPlaceholders(keys.length)})`
+      const params = keys.map(key => forDB[key])
+      await trans.executeSql(query, params)
     })
   },
 
+  /**
+   * @return {Stock[]}
+   */
   async findStocks() {
     let stocks = []
     await sqliteDB.readTransaction(async trans => {
       const result = await trans.executeSql('SELECT * FROM stocks')
       const rows = result[1].rows
-      stocks = rows.raw()
+      stocks = rows.raw().map(Stock.fromDB)
     })
     return stocks
   },
 
+  /**
+   * @return {Stock|null}
+   */
   async findStock({ symbol }) {
     let stock = null
     await sqliteDB.readTransaction(async trans => {
       const result = await trans.executeSql('SELECT * FROM stocks WHERE symbol=?', [symbol])
       const rows = result[1].rows
-      stock = rows.length > 0 ? rows.item(0) : null
+      stock = rows.length > 0 ? Stock.fromDB(rows.item(0)) : null
     })
     return stock
   },
 
+  /**
+   * @return {Stock|null}
+   */
   async findLastUpdatedStock() {
     let stock = null
     await sqliteDB.readTransaction(async trans => {
       const result = await trans.executeSql('SELECT * FROM stocks ORDER BY updated_at DESC LIMIT 1')
       const rows = result[1].rows
-      stock = rows.length > 0 ? rows.item(0) : null
+      stock = rows.length > 0 ? Stock.fromDB(rows.item(0)) : null
     })
     return stock
   },
 
-  async saveStock({ symbol, name, as_of, price, percent_change, updated_at }) {
+  /**
+   * @param {Stock} stock 
+   */
+  async saveStock(stock) {
     await sqliteDB.transaction(async trans => {
-      const query = 'INSERT OR REPLACE INTO stocks (symbol, name, as_of, price, percent_change, updated_at) VALUES (?, ?, ?, ?, ?, ?)'
-      const params = [symbol, name, as_of, price, percent_change, updated_at]
-      const result = await trans.executeSql(query, params)
-      console.log('result', result)
+      const forDB = Stock.toDB(stock)
+      const keys = Object.keys(forDB)
+      const query = `INSERT OR REPLACE INTO stocks (${keys.join(',')}) VALUES (${createQueryPlaceholders(keys.length)})`
+      const params = keys.map(key => forDB[key])
+      await trans.executeSql(query, params)
     })
   }
 }
+
+export { User, Stock }
