@@ -4,6 +4,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import Text from '../../../components/Text'
 
+import { number as numberConfig } from '../../../config'
+
 export default class CellDetail extends Component {
   render() {
     const { data } = this.props
@@ -11,9 +13,7 @@ export default class CellDetail extends Component {
       <View style={styles.container}>
         <View style={styles.stockContainer}>
           <Text style={styles.labelText}>Last price</Text>
-          <Text style={styles.valueText}>
-            {data.stock.price}
-          </Text>
+          <Text style={styles.valueText}>{data.stock.price.toFixed(numberConfig.DECIMAL_PLACES)}</Text>
           <Text style={[styles.labelText, styles.changeLabel]}>Change</Text>
           <Text style={[styles.changeValuesNegative, styles.valueText]}>
             -32.00
@@ -23,14 +23,10 @@ export default class CellDetail extends Component {
         </View>
         <View style={styles.infoContainer}>
           <View style={styles.infoContentContainer}>
-            <Text style={styles.messageText}>
-              The price went above 1,377.81 yesterday, 3:25 PM.
-            </Text>
+            <Text style={styles.messageText}>The price went above 1,377.81 yesterday, 3:25 PM.</Text>
             <View style={styles.resetContainer}>
               <Icon name="error-outline" style={styles.warningIcon} />
-              <Text style={styles.resetMessage}>
-                Reset or change the target price to be notified again.
-              </Text>
+              <Text style={styles.resetMessage}>Reset or change the target price to be notified again.</Text>
             </View>
           </View>
           <View style={styles.actionButtonsContainer}>

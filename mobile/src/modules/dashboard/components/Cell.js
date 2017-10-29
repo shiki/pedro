@@ -1,28 +1,33 @@
 import React, { Component } from 'react'
 import { View, StyleSheet } from 'react-native'
+import { BigNumber } from 'bignumber.js'
+
 import CellBorder from './CellBorder'
 import CellDetail from './CellDetail'
 import Text from '../../../components/Text'
 
+import { number as numberConfig } from '../../../config'
+
 export default class Cell extends Component {
   render() {
     const { data } = this.props
+    const { stock } = data
 
     // prettier-ignore
-    const progress = 1 - (Math.abs(data.stock.price - data.price) / data.price)
+    const progress = new BigNumber(1).sub(stock.price.sub(data.price).absoluteValue().dividedBy(data.price)).toNumber()
 
     return (
       <View style={styles.container}>
         <View style={styles.topContainer}>
           <View style={styles.stockContainer}>
             <Text style={styles.stockSymbol}>
-              {data.stock.symbol}
-              <Text style={styles.stockPrice}>&nbsp;{data.stock.price}</Text>
+              {stock.symbol}
+              <Text style={styles.stockPrice}>&nbsp;{stock.price.toFixed(numberConfig.DECIMAL_PLACES)}</Text>
             </Text>
-            <Text style={styles.stockName}>{data.stock.name}</Text>
+            <Text style={styles.stockName}>{stock.name}</Text>
           </View>
           <Text style={styles.operator}>{data.operator}</Text>
-          <Text style={styles.price}>{data.price}</Text>
+          <Text style={styles.price}>{data.price.toFixed(numberConfig.DECIMAL_PLACES)}</Text>
         </View>
         <CellDetail data={data} />
         <CellBorder progress={progress} />
