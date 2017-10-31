@@ -25,9 +25,10 @@ it('automatically creates a new user if there is no previously logged in', async
     expect(database.saveUser).toHaveBeenCalledTimes(1)
     expect(database.findUser).toHaveBeenCalledTimes(1)
 
-    expect(database.findAllUsers()).toHaveLength(1)
+    const allUsers = await database.findAllUsers()
+    expect(allUsers).toHaveLength(1)
 
-    const expectedUser = database.findAllUsers()[0]
+    const expectedUser = allUsers[0]
     expect(store.getState().session.user).toEqual(expectedUser)
     expect(await getStoredSessionUUID()).toEqual(expectedUser.uuid)
   })
