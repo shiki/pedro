@@ -6,7 +6,7 @@
     "start": "react-native start",
     "ios": "react-native run-ios",
     "start:ios": "concurrently -r 'react-native start' 'react-native run-ios'",
-    "test": "jest src",
+    "test": "jest --setupTestFrameworkScriptFile=./src/__tests__/init.js src",
     "it": "jest --setupTestFrameworkScriptFile=./integrationTests/lib/init.js integrationTests/lib",
     "it:build": "detox build"
   },
@@ -31,7 +31,6 @@
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
-    "babel-jest": "20.0.3",
     "babel-preset-react-native": "2.1.0",
     "chai": "^4.1.2",
     "concurrently": "^3.5.0",
@@ -42,12 +41,15 @@
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.1.0",
     "jest": "^21.2.1",
+    "mock-async-storage": "^2.0.2",
     "react-test-renderer": "16.0.0-alpha.12",
     "redux-immutable-state-invariant": "^2.0.0",
-    "redux-logger": "^3.0.6"
+    "redux-logger": "^3.0.6",
+    "redux-logic-test": "^1.0.5"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "testPathIgnorePatterns": ["<rootDir>/node_modules", "<rootDir>/src/__tests__/init.js"]
   },
   "detox": {
     "runner": "jest",

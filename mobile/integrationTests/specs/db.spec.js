@@ -4,27 +4,27 @@ import moment from 'moment'
 import { expect } from 'chai'
 import { BigNumber } from 'bignumber.js'
 
-import { client, User, Stock } from '../../src/services/db'
+import { database, User, Stock } from '../../src/services/db'
 
 export default function db(test) {
   const { beforeEach, it } = test
 
   beforeEach(async () => {
-    await client.deleteAll()
+    await database.deleteAll()
   })
 
   it('can save a user', async () => {
     // Arrange
     const user = new User({ uuid: '__temp__', password: '__pass__' })
 
-    let savedUser = await client.findUser({ uuid: user.uuid })
+    let savedUser = await database.findUser({ uuid: user.uuid })
     expect(savedUser).to.be.null
 
     // Act
-    await client.saveUser(user)
+    await database.saveUser(user)
 
     // Assert
-    savedUser = await client.findUser({ uuid: user.uuid })
+    savedUser = await database.findUser({ uuid: user.uuid })
     expect(savedUser).not.to.be.null
     expect(savedUser).to.be.instanceOf(User)
     expect(savedUser.password).to.eq(user.password)
@@ -37,24 +37,24 @@ export default function db(test) {
   it('overwrites a user with the same uuid', async () => {
     // Arrange
     const user = new User({ uuid: '__temp__', password: '__pass__' })
-    await client.saveUser(user)
+    await database.saveUser(user)
 
     // Act
     user.password = 'word'
-    await client.saveUser(user)
+    await database.saveUser(user)
 
     // Assert
-    const savedUser = await client.findUser({ uuid: user.uuid })
+    const savedUser = await database.findUser({ uuid: user.uuid })
     expect(savedUser.password).to.eq('word')
   })
 
   it('can find a user', async () => {
     // Arrange
-    await client.saveUser(new User({ uuid: '__temp__', password: 'p' }))
-    await client.saveUser(new User({ uuid: 'find_me', password: '__pass__' }))
+    await database.saveUser(new User({ uuid: '__temp__', password: 'p' }))
+    await database.saveUser(new User({ uuid: 'find_me', password: '__pass__' }))
 
     // Act
-    const user = await client.findUser({ uuid: 'find_me' })
+    const user = await database.findUser({ uuid: 'find_me' })
 
     // Assert
     expect(user).to.be.instanceOf(User)
@@ -77,14 +77,14 @@ export default function db(test) {
         .startOf('day')
     })
 
-    let savedStock = await client.findStock({ symbol: stock.symbol })
+    let savedStock = await database.findStock({ symbol: stock.symbol })
     expect(savedStock).to.be.null
 
     // Act
-    await client.saveStock(stock)
+    await database.saveStock(stock)
 
     // Assert
-    savedStock = await client.findStock({ symbol: stock.symbol })
+    savedStock = await database.findStock({ symbol: stock.symbol })
     expect(savedStock).not.to.be.null
     expect(savedStock).to.be.instanceOf(Stock)
     expect(savedStock.name).to.eq(stock.name)
@@ -113,14 +113,14 @@ export default function db(test) {
         .add(-1, 'days')
         .startOf('day')
     })
-    await client.saveStock(stock)
+    await database.saveStock(stock)
 
     // Act
     stock.name = 'Aboitiz Power'
-    await client.saveStock(stock)
+    await database.saveStock(stock)
 
     // Assert
-    const savedStock = await client.findStock({ symbol: 'AP' })
+    const savedStock = await database.findStock({ symbol: 'AP' })
     expect(savedStock.symbol).to.eq('AP')
     expect(savedStock.name).to.eq('Aboitiz Power')
   })
@@ -135,7 +135,7 @@ export default function db(test) {
       percent_change: new BigNumber(220.451),
       updated_at: moment()
     })
-    await client.saveStock(ap)
+    await database.saveStock(ap)
 
     const mer = new Stock({
       symbol: 'MER',
@@ -145,10 +145,10 @@ export default function db(test) {
       percent_change: new BigNumber(220.451),
       updated_at: moment().add(-1, 'days')
     })
-    await client.saveStock(mer)
+    await database.saveStock(mer)
 
     // Act
-    const lastUpdated = await client.findLastUpdatedStock()
+    const lastUpdated = await database.findLastUpdatedStock()
 
     // Assert
     expect(lastUpdated).not.to.be.null
@@ -156,7 +156,7 @@ export default function db(test) {
   })
 
   it('findLatestUpdatedStock returns null if there are no stocks', async () => {
-    const lastUpdated = await client.findLastUpdatedStock()
+    const lastUpdated = await database.findLastUpdatedStock()
     expect(lastUpdated).to.be.null
   })
 }

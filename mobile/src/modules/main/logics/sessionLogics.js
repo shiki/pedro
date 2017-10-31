@@ -4,10 +4,11 @@ import UUIDGenerator from 'react-native-uuid-generator'
 
 import * as api from '../../../utils/api'
 import { encrypt, decrypt } from '../../../utils/password'
+import { User } from '../../../models'
 
 import * as types from '../types'
 
-const sessionLoadUserLogic = createLogic({
+export const sessionLoadUserLogic = createLogic({
   type: types.SESSION_LOAD_START,
 
   processOptions: {
@@ -16,7 +17,7 @@ const sessionLoadUserLogic = createLogic({
 
   async process({ database }) {
     let user = await (async () => {
-      const uuid = await AsyncStorage.getItem('session:uuid')
+      const uuid = await getStoredSessionUUID()
       return uuid !== null ? database.findUser({ uuid }) : null
     })()
 
@@ -27,11 +28,11 @@ const sessionLoadUserLogic = createLogic({
     const uuid = await UUIDGenerator.getRandomUUID()
     const password = encrypt(await UUIDGenerator.getRandomUUID())
 
-    await database.saveUser({ uuid, password })
+    await database.saveUser(new User({ uuid, password }))
     user = await database.findUser({ uuid })
 
     // Set as logged in
-    await AsyncStorage.setItem('session:uuid', uuid)
+    await setStoredSessionUUID(uuid)
 
     return user
   }
@@ -70,5 +71,13 @@ const accessTokenLoadLogic = createLogic({
     return { accessToken }
   }
 })
+
+export async function getStoredSessionUUID() {
+  return (await AsyncStorage.getItem('session:uuid')) || null
+}
+
+function setStoredSessionUUID(uuid) {
+  return AsyncStorage.setItem('session:uuid', uuid)
+}
 
 export default [sessionLoadUserLogic, sessionLoadFulfilledLogic, accessTokenLoadLogic]

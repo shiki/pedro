@@ -1,9 +1,9 @@
 import SQLite from 'react-native-sqlite-storage'
 
-import { database as databaseConfig } from '../../config'
+import { database as databaseConfig } from '../config'
 
-import User from './User'
-import Stock from './Stock'
+import User from '../models/User'
+import Stock from '../models/Stock'
 
 const SQLITE_ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%fZ'
 
@@ -15,7 +15,7 @@ let sqliteDB = null
 export async function open() {
   sqliteDB = await SQLite.openDatabase({ name: 'pedro.sqlite', location: 'default' })
   await migrate(sqliteDB)
-  return { client }
+  return { database }
 }
 
 async function migrate(db) {
@@ -62,7 +62,7 @@ function createQueryPlaceholders(count) {
     .join(',')
 }
 
-export const client = {
+export const database = {
   async deleteAll() {
     await sqliteDB.transaction(async trans => {
       trans.executeSql('DELETE FROM stocks')
@@ -150,5 +150,3 @@ export const client = {
     })
   }
 }
-
-export { User, Stock }

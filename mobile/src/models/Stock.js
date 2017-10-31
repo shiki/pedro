@@ -2,7 +2,7 @@ import moment from 'moment'
 import check from 'offensive'
 import { BigNumber } from 'bignumber.js'
 
-import { number as numberConfig } from '../../config'
+import { number as numberConfig } from '../config'
 
 export default class Stock {
   /**
