@@ -22,7 +22,7 @@ export const database = {
   findUser: jest.fn(
     ({ uuid }) =>
       new Promise(resolve => {
-        resolve(users[uuid])
+        resolve(users[uuid] || null)
       })
   ),
 

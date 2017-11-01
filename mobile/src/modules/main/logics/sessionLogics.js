@@ -76,7 +76,7 @@ export async function getStoredSessionUUID() {
   return (await AsyncStorage.getItem('session:uuid')) || null
 }
 
-function setStoredSessionUUID(uuid) {
+export async function setStoredSessionUUID(uuid) {
   return AsyncStorage.setItem('session:uuid', uuid)
 }
 
