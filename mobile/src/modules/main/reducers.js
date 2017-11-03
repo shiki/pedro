@@ -7,12 +7,7 @@ export function sessionReducer(state = SESSION_REDUCER_INITIAL_STATE, action) {
     case types.SESSION_LOAD_FULFILLED:
       return { ...state, user: action.payload }
     case types.ACCESS_TOKEN_FETCH_FULFILLED: {
-      const { user, accessToken } = action.payload
-      return {
-        ...state,
-        accessToken,
-        user: user || state.user
-      }
+      return { ...state, accessToken: action.payload }
     }
     default:
       return state

@@ -6,8 +6,8 @@
     "start": "react-native start",
     "ios": "react-native run-ios",
     "start:ios": "concurrently -r 'react-native start' 'react-native run-ios'",
-    "test": "jest --setupTestFrameworkScriptFile=./src/__tests__/init.js src",
-    "it": "jest --setupTestFrameworkScriptFile=./integrationTests/lib/init.js integrationTests/lib",
+    "test": "jest",
+    "it": "jest --config=jest.it.config.js",
     "it:build": "detox build"
   },
   "dependencies": {
@@ -42,14 +42,11 @@
     "eslint-plugin-react": "^7.1.0",
     "jest": "^21.2.1",
     "mock-async-storage": "^2.0.2",
+    "node-fetch": "^1.7.3",
     "react-test-renderer": "16.0.0-alpha.12",
     "redux-immutable-state-invariant": "^2.0.0",
     "redux-logger": "^3.0.6",
     "redux-logic-test": "^1.0.5"
-  },
-  "jest": {
-    "preset": "react-native",
-    "testPathIgnorePatterns": ["<rootDir>/node_modules", "<rootDir>/src/__tests__/init.js"]
   },
   "detox": {
     "runner": "jest",

@@ -4,7 +4,8 @@ import moment from 'moment'
 import { expect } from 'chai'
 import { BigNumber } from 'bignumber.js'
 
-import { database, User, Stock } from '../../src/services/db'
+import { database } from '../../src/services/db'
+import { User, Stock } from '../../src/models'
 
 export default function db(test) {
   const { beforeEach, it } = test

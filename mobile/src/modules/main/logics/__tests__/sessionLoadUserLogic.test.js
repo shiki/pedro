@@ -13,6 +13,7 @@ let store = null
 
 beforeEach(() => {
   database.deleteAll()
+  setStoredSessionUUID(null)
 
   store = createMockStore({ initialState: {}, reducer: rootReducer, logic: [sessionLoadUserLogic], injectedDeps: { database } })
 
@@ -27,6 +28,7 @@ it('automatically creates a new user if there is no previously logged in', async
   return store.whenComplete(async () => {
     const successAction = store.actions.find(action => action.type === SESSION_LOAD_FULFILLED)
     expect(successAction).toBeTruthy()
+    expect(successAction.payload).toBeInstanceOf(User)
 
     expect(database.saveUser).toHaveBeenCalledTimes(1)
     expect(database.findUser).toHaveBeenCalledTimes(1)
@@ -35,6 +37,7 @@ it('automatically creates a new user if there is no previously logged in', async
     expect(allUsers).toHaveLength(1)
 
     const expectedUser = allUsers[0]
+    expect(successAction.payload).toEqual(expectedUser)
     expect(store.getState().session.user).toEqual(expectedUser)
     expect(await getStoredSessionUUID()).toEqual(expectedUser.uuid)
   })

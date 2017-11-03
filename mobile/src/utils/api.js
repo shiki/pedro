@@ -6,7 +6,6 @@ import { API_BASE_URL } from '../config'
 const API_CLIENT_ID = 'CLIENT_ID'
 
 export async function postToken({ uuid, password }) {
-  console.log('password', password)
   try {
     const response = await fetch(`${API_BASE_URL}/token`, {
       method: 'POST',
@@ -23,8 +22,6 @@ export async function postToken({ uuid, password }) {
     })
 
     const json = await response.json()
-    console.log('json', json)
-
     check(json.access_token, 'access_token').is.aString()
     check(json.user, 'user').is.anObject()
 

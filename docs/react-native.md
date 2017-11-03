@@ -16,6 +16,7 @@
 
 ## Libraries
 
+* [node-fetch](https://github.com/bitinn/node-fetch) is added as a dev package only because this is available natively in React Native. This is only used for mocking in unit tests. It is also ignored in `rn-cli.config.js`
 * https://wix.github.io/react-native-navigation
 * [react-native-sqlite-storage](https://github.com/andpor/react-native-sqlite-storage)
 
