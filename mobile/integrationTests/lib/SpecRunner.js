@@ -25,6 +25,9 @@ class Runner {
       it(name, fn) {
         testCases.push({ name, fn })
       },
+      test(name, fn) {
+        testCases.push({ name, fn })
+      },
       beforeEach(fn) {
         beforeEachFunctions.push(fn)
       }

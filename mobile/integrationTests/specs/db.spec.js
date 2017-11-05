@@ -7,8 +7,8 @@ import { BigNumber } from 'bignumber.js'
 import { database } from '../../src/services/db'
 import { User, Stock } from '../../src/models'
 
-export default function db(test) {
-  const { beforeEach, it } = test
+export default function dbSpec(spec) {
+  const { beforeEach, it, test } = spec
 
   beforeEach(async () => {
     await database.deleteAll()
@@ -61,6 +61,12 @@ export default function db(test) {
     expect(user).to.be.instanceOf(User)
     expect(user.uuid).to.eq('find_me')
     expect(user.password).to.eq('__pass__')
+  })
+
+  test('findUser returns null if the user does not exist', async () => {
+    const user = await database.findUser({ uuid: '__uuid__' })
+
+    expect(user).to.be.null
   })
 
   it('can save a stock', async () => {
@@ -156,7 +162,7 @@ export default function db(test) {
     expect(lastUpdated.symbol).to.eq(ap.symbol)
   })
 
-  it('findLatestUpdatedStock returns null if there are no stocks', async () => {
+  test('findLatestUpdatedStock returns null if there are no stocks', async () => {
     const lastUpdated = await database.findLastUpdatedStock()
     expect(lastUpdated).to.be.null
   })
