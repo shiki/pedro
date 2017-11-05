@@ -47,7 +47,15 @@ export default class Stock {
   }
 
   /**
+   * Convert a DB query result to a Stock instance
+   * 
    * @param {Object} source 
+   * @param {string} source.symbol
+   * @param {string} source.name
+   * @param {string} source.as_of
+   * @param {string} source.price
+   * @param {string} source.percent_change
+   * @param {string} updated_at
    * @return {Stock}
    */
   static fromDB(source) {
@@ -75,5 +83,31 @@ export default class Stock {
       percent_change: percent_change.toFixed(numberConfig.DECIMAL_PLACES),
       updated_at: updated_at.toISOString()
     }
+  }
+
+  /**
+   * Convert an API result JSON to a Stock instance
+   * 
+   * @param {Object} source 
+   * @param {string} source.symbol
+   * @param {string} source.name
+   * @param {string} source.as_of
+   * @param {string} source.price
+   * @param {string} source.percent_change
+   * @param {string} updated_at
+   * @return {Stock}
+   */
+  static fromAPI(source) {
+    ['symbol', 'name', 'as_of', 'price', 'percent_change', 'updated_at'].forEach(prop => check(source[prop], prop).is.aString())
+
+    const { symbol, name } = source
+    return new Stock({
+      symbol,
+      name,
+      as_of: moment(source.as_of),
+      price: new BigNumber(source.price),
+      percent_change: new BigNumber(source.percent_change),
+      updated_at: moment(source.updated_at)
+    })
   }
 }

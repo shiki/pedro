@@ -33,7 +33,7 @@ it('automatically creates a new user if there is no previously logged in', async
     expect(database.saveUser).toHaveBeenCalledTimes(1)
     expect(database.findUser).toHaveBeenCalledTimes(1)
 
-    const allUsers = await database.findAllUsers()
+    const allUsers = await database.findUsers()
     expect(allUsers).toHaveLength(1)
 
     const expectedUser = allUsers[0]
@@ -81,7 +81,7 @@ it('auto-creates a new user if the previously logged in uuid is invalid', async 
     expect(database.saveUser).toHaveBeenCalledTimes(1)
     expect(database.findUser).toHaveBeenCalledTimes(2)
 
-    const allUsers = await database.findAllUsers()
+    const allUsers = await database.findUsers()
     expect(allUsers).toHaveLength(1)
 
     const expectedUser = allUsers[0]

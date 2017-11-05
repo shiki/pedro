@@ -1,3 +1,5 @@
+/* global fetch:true */
+/* exported fetch */
 /* eslint-disable global-require */
 
 // The react-native built-in fetch uses whatwg-fetch but is not available when running just in Node. We will use node-fetch instead.

@@ -1,3 +1,5 @@
+/* global fetch */
+
 import check from 'offensive'
 import { stringify } from 'query-string'
 
@@ -5,6 +7,9 @@ import { API_BASE_URL } from '../config'
 
 const API_CLIENT_ID = 'CLIENT_ID'
 
+/**
+ * @returns {{user: Object, access_token: string}}
+ */
 export async function postToken({ uuid, password }) {
   try {
     const response = await fetch(`${API_BASE_URL}/token`, {
@@ -27,39 +32,38 @@ export async function postToken({ uuid, password }) {
 
     return json
   } catch (error) {
-    console.error(error)
     throw error
   }
 }
 
+/**
+ * @param {Object} param
+ * @param {string} param.accessToken
+ * @param {moment} param.updatedAfter
+ */
 export async function getStocks({ accessToken, updatedAfter }) {
-  try {
-    const queryString = updatedAfter != null ? stringify({ updated_after: updatedAfter }) : ''
-    const response = await fetch(`${API_BASE_URL}/stocks?${queryString}`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
+  const queryString = updatedAfter ? stringify({ updated_after: updatedAfter.toISOString() }) : ''
+  const response = await fetch(`${API_BASE_URL}/stocks?${queryString}`, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`
+    }
+  })
 
-    const json = await response.json()
-    console.log('getStocks json', json)
+  const json = await response.json()
 
-    check(json.data.stocks, 'data.stocks').is.anArray()
-    json.data.stocks.forEach(stock => {
-      check(stock.symbol, 'symbol').is.aString()
-      check(stock.as_of, 'as_of').is.aString()
-      check(stock.updated_at, 'updated_at').is.aString()
-      check(stock.name, 'name').is.aString()
-      check(stock.percent_change, 'percent_change').is.aString()
-      check(stock.price, 'price').is.aString()
-    })
+  check(json.data, 'json.data').is.anObject()
+  check(json.data.stocks, 'json.data.stocks').is.anArray()
+  json.data.stocks.forEach(stock => {
+    check(stock.symbol, 'stock.symbol').is.aString()
+    check(stock.as_of, 'stock.as_of').is.aString()
+    check(stock.updated_at, 'stock.updated_at').is.aString()
+    check(stock.name, 'stock.name').is.aString()
+    check(stock.percent_change, 'stock.percent_change').is.aString()
+    check(stock.price, 'stock.price').is.aString()
+  })
 
-    return json.data.stocks
-  } catch (error) {
-    console.error(error)
-    return []
-  }
+  return json.data.stocks
 }

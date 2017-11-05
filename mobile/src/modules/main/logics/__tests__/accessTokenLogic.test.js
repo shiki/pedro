@@ -2,12 +2,12 @@ import { createMockStore } from 'redux-logic-test'
 import UUIDGenerator from 'react-native-uuid-generator'
 
 import { accessTokenFetchStart } from '../../actions'
-import { ACCESS_TOKEN_FETCH_FULFILLED, ACCESS_TOKEN_FETCH_REJECTED } from '../../types'
+import { ACCESS_TOKEN_FETCH_FULFILLED } from '../../types'
 import rootReducer from '../../../../rootReducer'
 import { User } from '../../../../models'
 import { encrypt } from '../../../../utils/password'
 
-import { logics, getStoredAccessToken } from '../sessionLogics'
+import { logics, getStoredAccessToken, setStoredAccessToken } from '../sessionLogics'
 
 let store = null
 let user = null
@@ -36,4 +36,15 @@ it('fetches a token from the api if there is no token', async () => {
   })
 })
 
-it('uses the stored token if it already exists', async () => {})
+it('uses the stored token if it already exists', async () => {
+  const accessToken = '__access_token__'
+  setStoredAccessToken(user.uuid, accessToken)
+
+  store.dispatch(accessTokenFetchStart(user))
+
+  return store.whenComplete(() => {
+    const action = store.actions[store.actions.length - 1]
+    expect(action.type).toEqual(ACCESS_TOKEN_FETCH_FULFILLED)
+    expect(action.payload).toBe(accessToken)
+  })
+})

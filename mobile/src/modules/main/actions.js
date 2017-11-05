@@ -27,3 +27,7 @@ export function stocksLoadedFromDb(stocks) {
 export function stocksFetchFulfilled(stocks) {
   return { type: types.STOCKS_FETCH_FULFILLED, payload: stocks }
 }
+
+export function stocksFetchRejected(error) {
+  return { type: types.STOCKS_FETCH_REJECTED, payload: error }
+}

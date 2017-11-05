@@ -32,7 +32,7 @@ it('encrypts the password when saving to the database', async () => {
 
     expect(encrypt).toHaveBeenCalledTimes(1)
 
-    const allUsers = await database.findAllUsers()
+    const allUsers = await database.findUsers()
     const user = allUsers[0]
 
     expect(user.password).toContain('__encrypted__')
