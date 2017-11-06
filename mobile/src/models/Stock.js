@@ -55,7 +55,7 @@ export default class Stock {
    * @param {string} source.as_of
    * @param {string} source.price
    * @param {string} source.percent_change
-   * @param {string} updated_at
+   * @param {string} source.updated_at
    * @return {Stock}
    */
   static fromDB(source) {
@@ -94,7 +94,7 @@ export default class Stock {
    * @param {string} source.as_of
    * @param {string} source.price
    * @param {string} source.percent_change
-   * @param {string} updated_at
+   * @param {string} source.updated_at
    * @return {Stock}
    */
   static fromAPI(source) {

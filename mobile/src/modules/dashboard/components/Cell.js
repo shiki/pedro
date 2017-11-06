@@ -1,20 +1,31 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { View, StyleSheet } from 'react-native'
+import PropTypes from 'prop-types'
 import { BigNumber } from 'bignumber.js'
 
 import CellBorder from './CellBorder'
 import CellDetail from './CellDetail'
 import Text from '../../../components/Text'
+import { Stock } from '../../../models'
 
-import { number as numberConfig } from '../../../config'
+import { toDisplayFormat } from '../../../utils/number'
 
-export default class Cell extends Component {
+export default class Cell extends PureComponent {
+  static propTypes = {
+    stock: PropTypes.instanceOf(Stock).isRequired,
+    price: PropTypes.instanceOf(BigNumber).isRequired,
+    operator: PropTypes.string.isRequired
+  }
+
   render() {
-    const { data } = this.props
-    const { stock } = data
+    const { stock, price, operator } = this.props
 
-    // prettier-ignore
-    const progress = new BigNumber(1).sub(stock.price.sub(data.price).absoluteValue().dividedBy(data.price)).toNumber()
+    const progress = new BigNumber(1).sub(
+      stock.price
+        .sub(price)
+        .absoluteValue()
+        .dividedBy(price)
+    )
 
     return (
       <View style={styles.container}>
@@ -22,14 +33,14 @@ export default class Cell extends Component {
           <View style={styles.stockContainer}>
             <Text style={styles.stockSymbol}>
               {stock.symbol}
-              <Text style={styles.stockPrice}>&nbsp;{stock.price.toFixed(numberConfig.DECIMAL_PLACES)}</Text>
+              <Text style={styles.stockPrice}>&nbsp;{toDisplayFormat(stock.price)}</Text>
             </Text>
             <Text style={styles.stockName}>{stock.name}</Text>
           </View>
-          <Text style={styles.operator}>{data.operator}</Text>
-          <Text style={styles.price}>{data.price.toFixed(numberConfig.DECIMAL_PLACES)}</Text>
+          <Text style={styles.operator}>{operator}</Text>
+          <Text style={styles.price}>{toDisplayFormat(price)}</Text>
         </View>
-        <CellDetail data={data} />
+        <CellDetail stock={stock} />
         <CellBorder progress={progress} />
       </View>
     )

@@ -3,11 +3,13 @@
 
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 /**
  * @typedef {Object} Icons
  * @property {object} settings
  * @property {object} add
+ * @property {object} modalCancel
  */
 
 /** @type {Icons} */
@@ -24,6 +26,12 @@ const iconConfig = {
     font: MaterialIcons,
     size: 24,
     icon: 'add-circle-outline',
+    color: '#616161'
+  },
+  modalCancel: {
+    font: Ionicons,
+    size: 28,
+    icon: 'ios-arrow-down',
     color: '#616161'
   }
 }

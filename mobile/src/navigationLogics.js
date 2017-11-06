@@ -3,11 +3,13 @@ import { Navigation } from 'react-native-navigation'
 
 import * as mainTypes from './modules/main/types'
 import * as dashboardTypes from './modules/dashboard/types'
+import * as alertTypes from './modules/alert/types'
 
 import * as screenIDs from './screenIDs'
 
 const navigationLogic = createLogic({
   type: '*',
+  latest: true,
 
   process({ action }) {
     switch (action.type) {
@@ -20,10 +22,14 @@ const navigationLogic = createLogic({
       }
       case dashboardTypes.ADD_BUTTON_PRESSED: {
         const { navigator } = action.payload
-        console.log('got navigation', navigator)
         navigator.showModal({
           screen: screenIDs.STOCK_SELECTION
         })
+        break
+      }
+      case alertTypes.CANCEL_BUTTON_PRESSED: {
+        const { navigator } = action.payload
+        navigator.dismissModal()
         break
       }
       default:

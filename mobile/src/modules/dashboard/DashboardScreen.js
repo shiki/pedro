@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { FlatList, StyleSheet } from 'react-native'
+import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { addButtonPressed } from './actions'
@@ -9,6 +10,12 @@ import Cell from './components/Cell'
 import { icons } from '../../services/icons'
 
 export class Dashboard extends Component {
+  static propTypes = {
+    navigator: PropTypes.objectOf(Object).isRequired,
+    data: PropTypes.arrayOf(Object).isRequired,
+    addButtonPressed: PropTypes.func.isRequired
+  }
+
   static navigatorStyle = {
     navBarNoBorder: true
   }
@@ -59,8 +66,14 @@ export class Dashboard extends Component {
   }
 }
 
+/**
+ * 
+ * @param {Object} param
+ * @param {Object} param.item
+ * @param {Stock} param.item.stock
+ */
 function renderItem({ item }) {
-  return <Cell data={item} />
+  return <Cell stock={item.stock} price={item.price} operator={item.operator} />
 }
 
 function keyExtractor(item, index) {

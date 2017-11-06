@@ -1,19 +1,27 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import PropTypes from 'prop-types'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+
+import { Stock } from '../../../models'
 
 import Text from '../../../components/Text'
 
-import { number as numberConfig } from '../../../config'
+import { toDisplayFormat } from '../../../utils/number'
 
-export default class CellDetail extends Component {
+export default class CellDetail extends PureComponent {
+  static propTypes = {
+    stock: PropTypes.instanceOf(Stock).isRequired
+  }
+
   render() {
-    const { data } = this.props
+    const { stock } = this.props
+
     return (
       <View style={styles.container}>
         <View style={styles.stockContainer}>
           <Text style={styles.labelText}>Last price</Text>
-          <Text style={styles.valueText}>{data.stock.price.toFixed(numberConfig.DECIMAL_PLACES)}</Text>
+          <Text style={styles.valueText}>{toDisplayFormat(stock.price)}</Text>
           <Text style={[styles.labelText, styles.changeLabel]}>Change</Text>
           <Text style={[styles.changeValuesNegative, styles.valueText]}>
             -32.00

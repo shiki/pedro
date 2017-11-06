@@ -1,0 +1,3 @@
+export const CANCEL_BUTTON_PRESSED = 'alert/CANCEL_BUTTON_PRESSED'
+
+export default { CANCEL_BUTTON_PRESSED }
