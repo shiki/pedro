@@ -7,18 +7,18 @@ import { icons } from '../../services/icons'
 
 import { Stock } from '../../models'
 
-import Text from '../../components/Text'
-import StockSelectionCell from './components/StockSelectionCell'
+import { StockSelectionCell, MIN_HEIGHT as CELL_MIN_HEIGHT } from './components/StockSelectionCell'
 
 import { stocksFetchStart } from '../main/actions'
-import { cancelButtonPressed } from './actions'
+import { cancelButtonPressed, stockSelected } from './actions'
 
 export class StockSelection extends Component {
   static propTypes = {
     stocks: PropTypes.arrayOf(PropTypes.instanceOf(Stock)).isRequired,
     navigator: PropTypes.objectOf(Object).isRequired,
     stocksFetchStart: PropTypes.func.isRequired,
-    cancelButtonPressed: PropTypes.func.isRequired
+    cancelButtonPressed: PropTypes.func.isRequired,
+    stockSelected: PropTypes.func.isRequired
   }
 
   static navigatorStyle = {
@@ -31,6 +31,9 @@ export class StockSelection extends Component {
 
   constructor(props) {
     super(props)
+
+    this.renderItem = this.renderItem.bind(this)
+    this.onCellPressed = this.onCellPressed.bind(this)
 
     const { navigator } = props
 
@@ -46,7 +49,6 @@ export class StockSelection extends Component {
         }
       ]
     })
-
     navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
   }
 
@@ -63,6 +65,15 @@ export class StockSelection extends Component {
     }
   }
 
+  onCellPressed(stock) {
+    const { navigator } = this.props
+    this.props.stockSelected({ navigator, stock })
+  }
+
+  renderItem({ item }) {
+    return <StockSelectionCell stock={item} onPress={this.onCellPressed} />
+  }
+
   render() {
     return (
       <FlatList
@@ -70,29 +81,30 @@ export class StockSelection extends Component {
         data={this.props.stocks}
         extraData={this.state}
         keyExtractor={keyExtractor}
-        renderItem={renderItem}
+        renderItem={this.renderItem}
         ItemSeparatorComponent={renderSeparator}
+        getItemLayout={(data, index) => ({ offset: (CELL_MIN_HEIGHT + SEPARATOR_HEIGHT) * index, length: CELL_MIN_HEIGHT + SEPARATOR_HEIGHT, index })}
       />
     )
   }
 }
 
 const keyExtractor = item => item.symbol
-const renderItem = ({ item }) => <StockSelectionCell stock={item} />
 const renderSeparator = () => <View style={styles.separator} />
+
+const SEPARATOR_HEIGHT = 1
 
 const styles = StyleSheet.create({
   list: {
-    // backgroundColor: 'red',
     flex: 1
   },
   separator: {
-    height: 1,
+    height: SEPARATOR_HEIGHT,
     backgroundColor: '#EDEDED'
   }
 })
 
 const mapStateToProps = state => ({ stocks: state.stocks.list })
-const mapDispatchToProps = { stocksFetchStart, cancelButtonPressed }
+const mapDispatchToProps = { stocksFetchStart, cancelButtonPressed, stockSelected }
 
 export const StockSelectionScreen = connect(mapStateToProps, mapDispatchToProps)(StockSelection)

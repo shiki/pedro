@@ -87,5 +87,10 @@ it('uses the latest updated stock when fetching', () => {
 
     // Assert the payload is a list of stocks
     action.payload.forEach(stock => expect(stock).toBeInstanceOf(Stock))
+
+    // Assert the state was updated with the list
+    const stocksInState = store.getState().stocks.list
+    expect(stocksInState.length).toBeGreaterThan(stocks.length)
+    stocksInState.forEach(stock => expect(stock).toBeInstanceOf(Stock))
   })
 })
