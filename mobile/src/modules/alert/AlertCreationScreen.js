@@ -5,22 +5,23 @@ import { connect } from 'react-redux'
 
 import { icons } from '../../services/icons'
 import Text from '../../components/Text'
+import ActionButton from './components/ActionButton'
+
 import { toDisplayFormat } from '../../utils/number'
 
 import { Stock } from '../../models'
 
-import { backButtonPressed } from './actions'
+import { backButtonPressed, saveButtonPressed } from './actions'
 
 export class AlertCreation extends Component {
   static propTypes = {
     stock: PropTypes.instanceOf(Stock).isRequired,
     navigator: PropTypes.objectOf(Object).isRequired,
-    backButtonPressed: PropTypes.func.isRequired
+    backButtonPressed: PropTypes.func.isRequired,
+    saveButtonPressed: PropTypes.func.isRequired
   }
 
-  static navigatorStyle = {
-    navBarNoBorder: true
-  }
+  static navigatorStyle = { navBarNoBorder: true }
 
   constructor(props) {
     super(props)
@@ -40,6 +41,8 @@ export class AlertCreation extends Component {
       ]
     })
     navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
+
+    this.onSaveButtonPressed = this.onSaveButtonPressed.bind(this)
   }
 
   onNavigatorEvent(event) {
@@ -51,9 +54,13 @@ export class AlertCreation extends Component {
     }
   }
 
+  onSaveButtonPressed() {
+    const { navigator } = this.props
+    this.props.saveButtonPressed({ navigator })
+  }
+
   render() {
     const { stock } = this.props
-    console.log('stock', stock)
 
     return (
       <KeyboardAvoidingView behavior="padding" style={styles.container} keyboardVerticalOffset={64}>
@@ -76,7 +83,7 @@ export class AlertCreation extends Component {
           <TextInput style={styles.priceInput} autoFocus keyboardType="numeric" />
         </Panel>
         <View style={{ flex: 1 }} />
-        <NextButton title="Next" />
+        <ActionButton title="Next" onPress={this.onSaveButtonPressed} />
       </KeyboardAvoidingView>
     )
   }
@@ -107,26 +114,6 @@ OperatorButton.propTypes = {
   selected: PropTypes.bool
 }
 OperatorButton.defaultProps = { selected: false }
-
-const NextButton = ({ title }) => (
-  <TouchableOpacity style={nextButtonStyles.container}>
-    <Text style={nextButtonStyles.text}>{title}</Text>
-  </TouchableOpacity>
-)
-NextButton.propTypes = { title: PropTypes.string.isRequired }
-
-const nextButtonStyles = StyleSheet.create({
-  container: {
-    height: 48,
-    backgroundColor: '#616161',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  text: {
-    fontSize: 17,
-    color: 'white'
-  }
-})
 
 const styles = StyleSheet.create({
   container: {
@@ -202,6 +189,6 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => ({ stocks: state.stocks.list })
-const mapDispatchToProps = { backButtonPressed }
+const mapDispatchToProps = { backButtonPressed, saveButtonPressed }
 
 export const AlertCreationScreen = connect(mapStateToProps, mapDispatchToProps)(AlertCreation)

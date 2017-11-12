@@ -1,4 +1,4 @@
-import { BACK_BUTTON_PRESSED, CANCEL_BUTTON_PRESSED, STOCK_SELECTED } from './types'
+import { SAVE_BUTTON_PRESSED, BACK_BUTTON_PRESSED, CANCEL_BUTTON_PRESSED, STOCK_SELECTED } from './types'
 
 export function cancelButtonPressed({ navigator }) {
   return { type: CANCEL_BUTTON_PRESSED, payload: { navigator } }
@@ -6,6 +6,10 @@ export function cancelButtonPressed({ navigator }) {
 
 export function backButtonPressed({ navigator }) {
   return { type: BACK_BUTTON_PRESSED, payload: { navigator } }
+}
+
+export function saveButtonPressed({ navigator }) {
+  return { type: SAVE_BUTTON_PRESSED, payload: { navigator } }
 }
 
 /**

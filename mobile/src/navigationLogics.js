@@ -30,6 +30,7 @@ const navigationLogic = createLogic({
         Navigation.startSingleScreenApp({
           // screen: { screen: screenIDs.ALERT_CREATION },
           // passProps: { stock }
+          // screen: { screen: screenIDs.NOTIFICATION_PERMISSION_REQUEST }
           screen: { screen: screenIDs.DASHBOARD }
         })
         break
@@ -52,6 +53,11 @@ const navigationLogic = createLogic({
       case alertTypes.BACK_BUTTON_PRESSED: {
         const { navigator } = action.payload
         navigator.pop()
+        break
+      }
+      case alertTypes.SAVE_BUTTON_PRESSED: {
+        const { navigator } = action.payload
+        navigator.push({ screen: screenIDs.NOTIFICATION_PERMISSION_REQUEST })
         break
       }
       default:
