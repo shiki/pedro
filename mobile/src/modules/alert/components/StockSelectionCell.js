@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 import { Stock } from '../../../models'
-
 import Text from '../../../components/Text'
 
 import { toDisplayFormat } from '../../../utils/number'

@@ -10,6 +10,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
  * @property {object} settings
  * @property {object} add
  * @property {object} modalCancel
+ * @property {object} back
  */
 
 /** @type {Icons} */
@@ -32,6 +33,12 @@ const iconConfig = {
     font: Ionicons,
     size: 28,
     icon: 'ios-arrow-down',
+    color: '#616161'
+  },
+  back: {
+    font: Ionicons,
+    size: 28,
+    icon: 'ios-arrow-back',
     color: '#616161'
   }
 }

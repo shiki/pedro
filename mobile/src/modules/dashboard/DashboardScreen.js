@@ -67,7 +67,7 @@ export class Dashboard extends Component {
 }
 
 /**
- * 
+ *
  * @param {Object} param
  * @param {Object} param.item
  * @param {Stock} param.item.stock
