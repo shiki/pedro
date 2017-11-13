@@ -9,22 +9,26 @@ import ActionButton from './components/ActionButton'
 
 import { toDisplayFormat } from '../../utils/number'
 
-import { Stock } from '../../models'
+import { Stock, OPERATOR_LESS_THAN } from '../../models'
 
-import { backButtonPressed, saveButtonPressed } from './actions'
+import { backButtonPressed, saveAlertStart } from './actions'
 
 export class AlertCreation extends Component {
   static propTypes = {
     stock: PropTypes.instanceOf(Stock).isRequired,
     navigator: PropTypes.objectOf(Object).isRequired,
     backButtonPressed: PropTypes.func.isRequired,
-    saveButtonPressed: PropTypes.func.isRequired
+    saveAlertStart: PropTypes.func.isRequired
   }
 
   static navigatorStyle = { navBarNoBorder: true }
 
   constructor(props) {
     super(props)
+
+    this.state = {
+      price: ''
+    }
 
     const { navigator } = props
 
@@ -55,8 +59,10 @@ export class AlertCreation extends Component {
   }
 
   onSaveButtonPressed() {
-    const { navigator } = this.props
-    this.props.saveButtonPressed({ navigator })
+    const { navigator, stock } = this.props
+    const { price } = this.state
+    const operator = OPERATOR_LESS_THAN
+    this.props.saveAlertStart({ navigator, stock, price, operator })
   }
 
   render() {
@@ -80,10 +86,10 @@ export class AlertCreation extends Component {
         </Panel>
         <Panel style={styles.pricePanel}>
           <Text style={styles.priceCurrency}>₱</Text>
-          <TextInput style={styles.priceInput} autoFocus keyboardType="numeric" />
+          <TextInput style={styles.priceInput} autoFocus keyboardType="numeric" onChangeText={text => this.setState({ price: text })} />
         </Panel>
         <View style={{ flex: 1 }} />
-        <ActionButton title="Next" onPress={this.onSaveButtonPressed} />
+        <ActionButton title="Save" onPress={this.onSaveButtonPressed} />
       </KeyboardAvoidingView>
     )
   }
@@ -188,7 +194,7 @@ const styles = StyleSheet.create({
   }
 })
 
-const mapStateToProps = state => ({ stocks: state.stocks.list })
-const mapDispatchToProps = { backButtonPressed, saveButtonPressed }
+const mapStateToProps = () => ({})
+const mapDispatchToProps = { backButtonPressed, saveAlertStart }
 
 export const AlertCreationScreen = connect(mapStateToProps, mapDispatchToProps)(AlertCreation)

@@ -55,9 +55,9 @@ const navigationLogic = createLogic({
         navigator.pop()
         break
       }
-      case alertTypes.SAVE_BUTTON_PRESSED: {
+      case alertTypes.SAVE_ALERT_FULFILLED: {
         const { navigator } = action.payload
-        navigator.push({ screen: screenIDs.NOTIFICATION_PERMISSION_REQUEST })
+        navigator.dismissModal()
         break
       }
       default:

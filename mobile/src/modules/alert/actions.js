@@ -1,15 +1,19 @@
-import { SAVE_BUTTON_PRESSED, BACK_BUTTON_PRESSED, CANCEL_BUTTON_PRESSED, STOCK_SELECTED } from './types'
+import * as types from './types'
 
 export function cancelButtonPressed({ navigator }) {
-  return { type: CANCEL_BUTTON_PRESSED, payload: { navigator } }
+  return { type: types.CANCEL_BUTTON_PRESSED, payload: { navigator } }
 }
 
 export function backButtonPressed({ navigator }) {
-  return { type: BACK_BUTTON_PRESSED, payload: { navigator } }
+  return { type: types.BACK_BUTTON_PRESSED, payload: { navigator } }
 }
 
-export function saveButtonPressed({ navigator }) {
-  return { type: SAVE_BUTTON_PRESSED, payload: { navigator } }
+export function saveAlertStart({ navigator, stock, price, operator }) {
+  return { type: types.SAVE_ALERT_START, payload: { navigator, stock, price, operator } }
+}
+
+export function saveAlertFulfilled({ navigator }) {
+  return { type: types.SAVE_ALERT_FULFILLED, payload: { navigator } }
 }
 
 /**
@@ -18,5 +22,5 @@ export function saveButtonPressed({ navigator }) {
  * @param {Stock} param.stock
  */
 export function stockSelected({ navigator, stock }) {
-  return { type: STOCK_SELECTED, payload: { navigator, stock } }
+  return { type: types.STOCK_SELECTED, payload: { navigator, stock } }
 }

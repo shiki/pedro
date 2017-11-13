@@ -48,8 +48,8 @@ export default class Stock {
 
   /**
    * Convert a DB query result to a Stock instance
-   * 
-   * @param {Object} source 
+   *
+   * @param {Object} source
    * @param {string} source.symbol
    * @param {string} source.name
    * @param {string} source.as_of
@@ -71,7 +71,7 @@ export default class Stock {
   }
 
   /**
-   * @param {Stock} source 
+   * @param {Stock} source
    */
   static toDB(source) {
     const { symbol, name, as_of, price, percent_change, updated_at } = source
@@ -87,8 +87,8 @@ export default class Stock {
 
   /**
    * Convert an API result JSON to a Stock instance
-   * 
-   * @param {Object} source 
+   *
+   * @param {Object} source
    * @param {string} source.symbol
    * @param {string} source.name
    * @param {string} source.as_of
