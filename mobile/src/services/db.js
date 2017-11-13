@@ -2,8 +2,7 @@ import SQLite from 'react-native-sqlite-storage'
 
 import { database as databaseConfig } from '../config'
 
-import User from '../models/User'
-import Stock from '../models/Stock'
+import { User, Stock, Alert } from '../models'
 
 const SQLITE_ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%fZ'
 
@@ -49,11 +48,29 @@ async function migrate(db) {
         updated_at TEXT NOT NULL
       );
     `)
+
+    trans.executeSql(`
+      CREATE TABLE IF NOT EXISTS alerts (
+        uuid TEXT PRIMARY KEY,
+        user_uuid TEXT NOT NULL,
+        stock_symbol TEXT NOT NULL,
+        operator TEXT NOT NULL,
+        price TEXT NOT NULL,
+        notes TEXT,
+        triggered INTEGER DEFAULT(0) NOT NULL,
+        created_at TEXT DEFAULT(STRFTIME('${SQLITE_ISO_8601_FORMAT}', 'NOW')) NOT NULL,
+        updated_at TEXT DEFAULT(STRFTIME('${SQLITE_ISO_8601_FORMAT}', 'NOW')) NOT NULL,
+        synchronized INTEGER DEFAULT(0) NOT NULL,
+
+        FOREIGN KEY(user_uuid) REFERENCES users(uuid),
+        FOREIGN KEY(stock_symbol) REFERENCES stocks(symbol)
+      );
+    `)
   })
 }
 
 /**
- * @param {int} count 
+ * @param {int} count
  * @return {string}
  */
 function createQueryPlaceholders(count) {
@@ -86,7 +103,7 @@ export const database = {
   },
 
   /**
-   * @param {User} user 
+   * @param {User} user
    */
   async saveUser(user) {
     await sqliteDB.transaction(async trans => {
@@ -138,7 +155,7 @@ export const database = {
   },
 
   /**
-   * @param {Stock} stock 
+   * @param {Stock} stock
    */
   async saveStock(stock) {
     await sqliteDB.transaction(async trans => {
@@ -148,5 +165,31 @@ export const database = {
       const params = keys.map(key => forDB[key])
       await trans.executeSql(query, params)
     })
+  },
+
+  /**
+   * @param {Alert} alert
+   */
+  async saveAlert(alert) {
+    await sqliteDB.transaction(async trans => {
+      const forDB = Alert.toDB(alert)
+      const keys = Object.keys(forDB)
+      const query = `INSERT OR REPLACE INTO alerts (${keys.join(',')}) VALUES (${createQueryPlaceholders(keys.length)})`
+      const params = keys.map(key => forDB[key])
+      await trans.executeSql(query, params)
+    })
+  },
+
+  /**
+   * @return {Alert[]}
+   */
+  async findAlerts() {
+    let alerts = []
+    await sqliteDB.readTransaction(async trans => {
+      const result = await trans.executeSql('SELECT * FROM alerts')
+      const rows = result[1].rows
+      alerts = rows.raw().map(Alert.fromDB)
+    })
+    return alerts
   }
 }

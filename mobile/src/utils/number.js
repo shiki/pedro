@@ -1,9 +1,17 @@
+import { number as numberConfig } from '../config'
+
 /**
- * @param {BigNumber} number 
+ * @param {BigNumber} number
  * @return {string}
  */
 export function toDisplayFormat(number) {
   return number.toFixed(2)
 }
 
-export default { toDisplayFormat }
+/**
+ * @param {BigNumber} number
+ * @return {string}
+ */
+export function toDBFormat(number) {
+  return number.toFixed(numberConfig.DECIMAL_PLACES)
+}

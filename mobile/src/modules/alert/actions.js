@@ -8,12 +8,12 @@ export function backButtonPressed({ navigator }) {
   return { type: types.BACK_BUTTON_PRESSED, payload: { navigator } }
 }
 
-export function saveAlertStart({ navigator, stock, price, operator }) {
-  return { type: types.SAVE_ALERT_START, payload: { navigator, stock, price, operator } }
+export function alertSaveStart({ navigator, stock, price, operator }) {
+  return { type: types.ALERT_SAVE_START, payload: { navigator, stock, price, operator } }
 }
 
-export function saveAlertFulfilled({ navigator }) {
-  return { type: types.SAVE_ALERT_FULFILLED, payload: { navigator } }
+export function alertSaveFulfilled({ navigator, alert }) {
+  return { type: types.ALERT_SAVE_FULFILLED, payload: { navigator, alert } }
 }
 
 /**

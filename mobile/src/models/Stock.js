@@ -1,8 +1,7 @@
 import moment from 'moment'
 import check from 'offensive'
 import { BigNumber } from 'bignumber.js'
-
-import { number as numberConfig } from '../config'
+import { toDBFormat } from '../utils/number'
 
 export default class Stock {
   /**
@@ -79,8 +78,8 @@ export default class Stock {
       symbol,
       name,
       as_of: as_of.toISOString(),
-      price: price.toFixed(numberConfig.DECIMAL_PLACES),
-      percent_change: percent_change.toFixed(numberConfig.DECIMAL_PLACES),
+      price: toDBFormat(price),
+      percent_change: toDBFormat(percent_change),
       updated_at: updated_at.toISOString()
     }
   }

@@ -44,7 +44,7 @@ export default class User {
   }
 
   /**
-   * @param {Object} source 
+   * @param {Object} source
    * @return {User}
    */
   static fromDB(source) {
@@ -60,7 +60,7 @@ export default class User {
   }
 
   /**
-   * @param {User} user 
+   * @param {User} user
    */
   static toDB(user) {
     const { uuid, password, apns_key, created_at, updated_at, synchronized } = user
