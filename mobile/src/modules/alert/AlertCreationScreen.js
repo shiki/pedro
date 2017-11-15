@@ -11,14 +11,15 @@ import { toDisplayFormat } from '../../utils/number'
 
 import { Stock, OPERATOR_LESS_THAN } from '../../models'
 
-import { backButtonPressed, alertSaveStart } from './actions'
+import { backButtonPressed } from './actions'
+import { alertsSaveStart } from '../main/actions'
 
 export class AlertCreation extends Component {
   static propTypes = {
     stock: PropTypes.instanceOf(Stock).isRequired,
     navigator: PropTypes.objectOf(Object).isRequired,
     backButtonPressed: PropTypes.func.isRequired,
-    alertSaveStart: PropTypes.func.isRequired
+    alertsSaveStart: PropTypes.func.isRequired
   }
 
   static navigatorStyle = { navBarNoBorder: true }
@@ -62,7 +63,7 @@ export class AlertCreation extends Component {
     const { navigator, stock } = this.props
     const { price } = this.state
     const operator = OPERATOR_LESS_THAN
-    this.props.alertSaveStart({ navigator, stock, price, operator })
+    this.props.alertsSaveStart({ navigator, stock, price, operator })
   }
 
   render() {
@@ -195,6 +196,6 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = () => ({})
-const mapDispatchToProps = { backButtonPressed, alertSaveStart }
+const mapDispatchToProps = { backButtonPressed, alertsSaveStart }
 
 export const AlertCreationScreen = connect(mapStateToProps, mapDispatchToProps)(AlertCreation)

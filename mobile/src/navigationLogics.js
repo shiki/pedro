@@ -55,7 +55,7 @@ const navigationLogic = createLogic({
         navigator.pop()
         break
       }
-      case alertTypes.ALERT_SAVE_FULFILLED: {
+      case mainTypes.ALERTS_SAVE_FULFILLED: {
         const { navigator } = action.payload
         navigator.dismissModal()
         break

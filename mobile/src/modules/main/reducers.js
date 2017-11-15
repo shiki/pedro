@@ -20,6 +20,10 @@ export function alertsReducer(state = ALERTS_REDUCER_INITIAL_STATE, action) {
   switch (action.type) {
     case types.ALERTS_FETCH_FULFILLED:
       return { ...state, list: action.payload }
+    case types.ALERTS_SAVE_FULFILLED: {
+      const { alert } = action.payload
+      return { ...state, list: [...state.list, alert] }
+    }
     default:
       return state
   }

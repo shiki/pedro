@@ -8,14 +8,6 @@ export function backButtonPressed({ navigator }) {
   return { type: types.BACK_BUTTON_PRESSED, payload: { navigator } }
 }
 
-export function alertSaveStart({ navigator, stock, price, operator }) {
-  return { type: types.ALERT_SAVE_START, payload: { navigator, stock, price, operator } }
-}
-
-export function alertSaveFulfilled({ navigator, alert }) {
-  return { type: types.ALERT_SAVE_FULFILLED, payload: { navigator, alert } }
-}
-
 /**
  * @param {Object} param
  * @param {Object} param.navigator
