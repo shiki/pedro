@@ -25,29 +25,14 @@ export function alertsReducer(state = ALERTS_REDUCER_INITIAL_STATE, action) {
   }
 }
 
-const STOCKS_REDUCER_INITIAL_STATE = { list: [], loadedFromDb: false }
-const stockComparator = (left, right) => left.symbol.localeCompare(right.symbol)
+const STOCKS_REDUCER_INITIAL_STATE = { map: {}, loadedFromDb: false }
 
 export function stocksReducer(state = STOCKS_REDUCER_INITIAL_STATE, action) {
   switch (action.type) {
     case types.STOCKS_LOADED_FROM_DB:
-      return { ...state, loadedFromDb: true, list: action.payload.slice().sort(stockComparator) }
+      return { ...state, loadedFromDb: true, map: Object.assign({}, state.map, action.payload) }
     case types.STOCKS_FETCH_FULFILLED: {
-      // Map of newly updated { symbol: Stock }
-      const map = action.payload.reduce((prev, stock) => ({ ...prev, [stock.symbol]: stock }), {})
-      // Replace existing stocks. Mutate `map` to identify if there are new ones
-      let list = state.list.map(stock => {
-        if (map[stock.symbol]) {
-          const newStock = map[stock.symbol]
-          delete map[stock.symbol]
-          return newStock
-        }
-        return stock
-      })
-      // Merge remaining stocks in `map` into `list` and sort
-      list = [...list, ...Object.values(map)].sort(stockComparator)
-
-      return { ...state, list }
+      return { ...state, map: Object.assign({}, state.map, action.payload) }
     }
     default:
       return state

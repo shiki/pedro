@@ -6,25 +6,24 @@ import { BigNumber } from 'bignumber.js'
 import CellBorder from './CellBorder'
 import CellDetail from './CellDetail'
 import Text from '../../../components/Text'
-import { Stock } from '../../../models'
+import { Stock, Alert } from '../../../models'
 
 import { toDisplayFormat } from '../../../utils/number'
 
 export default class Cell extends PureComponent {
   static propTypes = {
     stock: PropTypes.instanceOf(Stock).isRequired,
-    price: PropTypes.instanceOf(BigNumber).isRequired,
-    operator: PropTypes.string.isRequired
+    alert: PropTypes.instanceOf(Alert).isRequired
   }
 
   render() {
-    const { stock, price, operator } = this.props
+    const { stock, alert } = this.props
 
     const progress = new BigNumber(1).sub(
       stock.price
-        .sub(price)
+        .sub(alert.price)
         .absoluteValue()
-        .dividedBy(price)
+        .dividedBy(alert.price)
     )
 
     return (
@@ -37,8 +36,8 @@ export default class Cell extends PureComponent {
             </Text>
             <Text style={styles.stockName}>{stock.name}</Text>
           </View>
-          <Text style={styles.operator}>{operator}</Text>
-          <Text style={styles.price}>{toDisplayFormat(price)}</Text>
+          <Text style={styles.operator}>{alert.operator}</Text>
+          <Text style={styles.price}>{toDisplayFormat(alert.price)}</Text>
         </View>
         <CellDetail stock={stock} />
         <CellBorder progress={progress} />

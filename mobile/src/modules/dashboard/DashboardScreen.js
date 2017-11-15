@@ -3,16 +3,18 @@ import { FlatList, StyleSheet } from 'react-native'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
-import { addButtonPressed } from './actions'
-
+import { icons } from '../../services/icons'
 import Cell from './components/Cell'
 
-import { icons } from '../../services/icons'
+import { Alert } from '../../models'
+
+import { addButtonPressed } from './actions'
 
 export class Dashboard extends Component {
   static propTypes = {
     navigator: PropTypes.objectOf(Object).isRequired,
-    data: PropTypes.arrayOf(Object).isRequired,
+    alerts: PropTypes.arrayOf(PropTypes.instanceOf(Alert)).isRequired,
+    stocksMap: PropTypes.objectOf(Object).isRequired,
     addButtonPressed: PropTypes.func.isRequired
   }
 
@@ -21,7 +23,7 @@ export class Dashboard extends Component {
   }
 
   static defaultProps = {
-    data: []
+    alerts: []
   }
 
   constructor(props) {
@@ -50,6 +52,8 @@ export class Dashboard extends Component {
     })
 
     navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this))
+
+    this.renderItem = this.renderItem.bind(this)
   }
 
   onNavigatorEvent(event) {
@@ -61,22 +65,25 @@ export class Dashboard extends Component {
     }
   }
 
+  /**
+   * @param {Object} param
+   * @param {Alert} param.item
+   */
+  renderItem({ item }) {
+    const { stocksMap } = this.props
+    const stock = stocksMap[item.stock_symbol]
+    return <Cell stock={stock} alert={item} />
+  }
+
   render() {
-    return <FlatList style={styles.list} data={this.props.data} extraData={this.state} keyExtractor={keyExtractor} renderItem={renderItem} />
+    return <FlatList style={styles.list} data={this.props.alerts} extraData={this.state} keyExtractor={keyExtractor} renderItem={this.renderItem} />
   }
 }
 
 /**
- *
- * @param {Object} param
- * @param {Object} param.item
- * @param {Stock} param.item.stock
+ * @param {Alert} item
  */
-function renderItem({ item }) {
-  return <Cell stock={item.stock} price={item.price} operator={item.operator} />
-}
-
-function keyExtractor(item, index) {
+function keyExtractor(item) {
   return item.uuid
 }
 
@@ -87,7 +94,8 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = state => ({
-  data: state.alerts.list
+  alerts: state.alerts.list,
+  stocksMap: state.stocks.map
 })
 
 export const DashboardScreen = connect(mapStateToProps, { addButtonPressed })(Dashboard)

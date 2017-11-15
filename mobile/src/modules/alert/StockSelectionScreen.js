@@ -11,6 +11,7 @@ import { StockSelectionCell, MIN_HEIGHT as CELL_MIN_HEIGHT } from './components/
 
 import { stocksFetchStart } from '../main/actions'
 import { cancelButtonPressed, stockSelected } from './actions'
+import { getStocksSortedList } from './selectors'
 
 export class StockSelection extends Component {
   static propTypes = {
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
   }
 })
 
-const mapStateToProps = state => ({ stocks: state.stocks.list })
+const mapStateToProps = state => ({ stocks: getStocksSortedList(state) })
 const mapDispatchToProps = { stocksFetchStart, cancelButtonPressed, stockSelected }
 
 export const StockSelectionScreen = connect(mapStateToProps, mapDispatchToProps)(StockSelection)

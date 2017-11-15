@@ -20,12 +20,18 @@ export function stocksFetchStart() {
   return { type: types.STOCKS_FETCH_START }
 }
 
-export function stocksLoadedFromDb(stocks) {
-  return { type: types.STOCKS_LOADED_FROM_DB, payload: stocks }
+/**
+ * @param {Object.<string, Stock>} stocksMap Map of symbol -> Stock
+ */
+export function stocksLoadedFromDb(stocksMap) {
+  return { type: types.STOCKS_LOADED_FROM_DB, payload: stocksMap }
 }
 
-export function stocksFetchFulfilled(stocks) {
-  return { type: types.STOCKS_FETCH_FULFILLED, payload: stocks }
+/**
+ * @param {Object.<string, Stock>} stocksMap Map of symbol -> Stock
+ */
+export function stocksFetchFulfilled(stocksMap) {
+  return { type: types.STOCKS_FETCH_FULFILLED, payload: stocksMap }
 }
 
 export function stocksFetchRejected(error) {

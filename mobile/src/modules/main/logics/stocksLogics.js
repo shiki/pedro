@@ -21,17 +21,16 @@ export const stocksFetchLogic = createLogic({
   type: types.STOCKS_FETCH_START,
   latest: true,
 
-  // TODO throw failure if no stocks ever get loaded
   async process({ getState, database }, dispatch, done) {
     try {
       // If there is no state set yet, load from DB
       if (!getState().stocks.loadedFromDb) {
-        const stocks = await database.findStocks()
-        await dispatch(actions.stocksLoadedFromDb(stocks))
+        const map = stocksListToMap(await database.findStocks())
+        await dispatch(actions.stocksLoadedFromDb(map))
       }
 
-      const stocks = await fetchAndSaveStocks({ accessToken: getState().session.accessToken, database })
-      dispatch(actions.stocksFetchFulfilled(stocks))
+      const map = stocksListToMap(await fetchAndSaveStocks({ accessToken: getState().session.accessToken, database }))
+      dispatch(actions.stocksFetchFulfilled(map))
     } catch (error) {
       dispatch(actions.stocksFetchRejected(error))
     }
@@ -55,6 +54,14 @@ async function fetchAndSaveStocks({ accessToken, database }) {
       return saved
     })
   )
+}
+
+/**
+ * @param {Stock[]} list
+ * @return {Object.<string, Stock>}
+ */
+function stocksListToMap(list) {
+  return list.reduce((map, stock) => ({ ...map, [stock.symbol]: stock }), {})
 }
 
 export const logics = [stocksFetchStartLogic, stocksFetchLogic]
