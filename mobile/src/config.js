@@ -7,6 +7,9 @@ export const database = {
 }
 
 export const number = {
+  /**
+   * The number of decimal places to save in the database
+   */
   DECIMAL_PLACES: 6
 }
 

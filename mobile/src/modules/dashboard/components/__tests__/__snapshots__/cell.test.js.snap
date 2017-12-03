@@ -120,6 +120,7 @@ exports[`renders correctly 1`] = `
       allowFontScaling={true}
       disabled={false}
       ellipsizeMode="tail"
+      numberOfLines={1}
       style={
         Array [
           Object {

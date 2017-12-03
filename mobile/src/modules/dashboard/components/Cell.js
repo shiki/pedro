@@ -37,7 +37,9 @@ export default class Cell extends PureComponent {
             <Text style={styles.stockName}>{stock.name}</Text>
           </View>
           <Text style={styles.operator}>{alert.operator}</Text>
-          <Text style={styles.price}>{toDisplayFormat(alert.price)}</Text>
+          <Text numberOfLines={1} style={styles.price}>
+            {toDisplayFormat(alert.price)}
+          </Text>
         </View>
         <CellDetail stock={stock} />
         <CellBorder progress={progress} />

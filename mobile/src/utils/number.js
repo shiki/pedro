@@ -5,7 +5,7 @@ import { number as numberConfig } from '../config'
  * @return {string}
  */
 export function toDisplayFormat(number) {
-  return number.toFixed(2)
+  return number.toFormat(2)
 }
 
 /**
