@@ -3,6 +3,8 @@ import { BigNumber } from 'bignumber.js'
 import UUIDGenerator from 'react-native-uuid-generator'
 import check from 'offensive'
 
+import { database } from '../../../services/db'
+
 import {
   ACCESS_TOKEN_FETCH_FULFILLED,
   ALERTS_FETCH_START,
@@ -33,8 +35,9 @@ const alertsFetchLogic = createLogic({
   },
 
   // TODO synchronize
-  async process({ database }) {
-    return database.findAlerts()
+  async process({ getState }) {
+    const user = getState().session.user
+    return database.findAlerts(user.uuid)
   }
 })
 
@@ -45,7 +48,7 @@ const alertsSaveLogic = createLogic({
     failType: ALERTS_SAVE_REJECTED
   },
 
-  async process({ action, getState, database }) {
+  async process({ action, getState }) {
     const { navigator, stock, operator, price: priceAsString } = action.payload
     const user = getState().session.user
 

@@ -2,6 +2,7 @@ import { AsyncStorage } from 'react-native'
 import { createLogic } from 'redux-logic'
 import UUIDGenerator from 'react-native-uuid-generator'
 
+import { database } from '../../../services/db'
 import * as api from '../../../utils/api'
 import { encrypt, decrypt } from '../../../utils/password'
 import { User } from '../../../models'
@@ -16,10 +17,10 @@ export const sessionLoadUserLogic = createLogic({
     successType: sessionLoadFulfilled
   },
 
-  async process({ database }) {
+  async process() {
     let user = await (async () => {
       const uuid = await getStoredSessionUUID()
-      return uuid !== null ? database.findUser({ uuid }) : null
+      return uuid !== null ? database.findUser(uuid) : null
     })()
 
     if (user !== null) {
@@ -30,7 +31,7 @@ export const sessionLoadUserLogic = createLogic({
     const password = encrypt(await UUIDGenerator.getRandomUUID())
 
     await database.saveUser(new User({ uuid, password }))
-    user = await database.findUser({ uuid })
+    user = await database.findUser(uuid)
 
     // Set as logged in
     await setStoredSessionUUID(uuid)

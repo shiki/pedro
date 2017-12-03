@@ -1,4 +1,5 @@
 import SQLite from 'react-native-sqlite-storage'
+import check from 'offensive'
 
 import { database as databaseConfig } from '../config'
 
@@ -13,6 +14,8 @@ let sqliteDB = null
 
 export async function open() {
   sqliteDB = await SQLite.openDatabase({ name: 'pedro.sqlite', location: 'default' })
+  await sqliteDB.executeSql('PRAGMA foreign_keys = ON;')
+
   await migrate(sqliteDB)
   return { database }
 }
@@ -79,117 +82,151 @@ function createQueryPlaceholders(count) {
     .join(',')
 }
 
+/**
+ * @param {Object} param
+ * @param {string} param.query
+ * @param {?Object[]} param.params
+ */
+async function executeSql({ query, params = null, useWriteTransaction = false }) {
+  const catchHandler = dbError => {
+    const message = `${dbError.message}. Tried to execute query '${query}' with params ${JSON.stringify(params)}`
+    const error = new Error(message)
+    // TODO replace console.error with third party error logging
+    console.error(error)
+    return Promise.reject(error)
+  }
+
+  if (useWriteTransaction) {
+    let result = null
+    return sqliteDB
+      .transaction(async trans => {
+        result = await trans.executeSql(query, params)
+      })
+      .then(() => result)
+      .catch(catchHandler)
+  }
+
+  let result = null
+  return sqliteDB
+    .readTransaction(async trans => {
+      result = await trans.executeSql(query, params)
+    })
+    .then(() => result)
+    .catch(catchHandler)
+}
+
+/**
+ * @param {string} query
+ * @param {?Object[]} params
+ */
+async function findOne(query, params = null) {
+  return find(query, params).then(rows => (rows.length > 0 ? rows[0] : null))
+}
+
+/**
+ * @param {string} query
+ * @param {?Object[]} params
+ * @returns {Object[]}
+ */
+async function find(query, params = null) {
+  return executeSql({ query, params }).then(result => result[1].rows.raw())
+}
+
+/**
+ * @param {string} table
+ * @param {Object} row
+ */
+async function insertOrReplace(table, row) {
+  const keys = Object.keys(row)
+  const query = `INSERT OR REPLACE INTO ${table} (${keys.join(',')}) VALUES (${createQueryPlaceholders(keys.length)})`
+  const params = keys.map(key => row[key])
+  return executeSql({ query, params, useWriteTransaction: true }).then(result => {
+    const rowsAffected = result[1].rowsAffected
+    check(rowsAffected, 'rowsAffected').to.be.greaterThan(0)
+    return { rowsAffected }
+  })
+}
+
 export const database = {
   async deleteAll() {
-    await sqliteDB.transaction(async trans => {
+    return sqliteDB.transaction(trans => {
+      trans.executeSql('DELETE FROM alerts')
       trans.executeSql('DELETE FROM stocks')
       trans.executeSql('DELETE FROM users')
     })
   },
 
   /**
-   * @param {Object} params
-   * @param {string} params.uuid
-   * @return {User|null}
-   */
-  async findUser({ uuid }) {
-    let user = null
-    await sqliteDB.readTransaction(async trans => {
-      const result = await trans.executeSql('SELECT * FROM users WHERE uuid=?', [uuid])
-      const rows = result[1].rows
-      user = rows.length > 0 ? User.fromDB(rows.item(0)) : null
-    })
-    return user
-  },
-
-  /**
    * @param {User} user
    */
   async saveUser(user) {
-    await sqliteDB.transaction(async trans => {
-      const forDB = User.toDB(user)
-      const keys = Object.keys(forDB)
-      const query = `INSERT OR REPLACE INTO users (${keys.join(',')}) VALUES (${createQueryPlaceholders(keys.length)})`
-      const params = keys.map(key => forDB[key])
-      await trans.executeSql(query, params)
-    })
+    check(user, 'user').is.anInstanceOf(User)
+    return insertOrReplace('users', User.toDB(user))
   },
 
   /**
-   * @return {Stock[]}
+   * @param {string} uuid
+   * @return {User|null}
    */
-  async findStocks() {
-    let stocks = []
-    await sqliteDB.readTransaction(async trans => {
-      const result = await trans.executeSql('SELECT * FROM stocks')
-      const rows = result[1].rows
-      stocks = rows.raw().map(Stock.fromDB)
-    })
-    return stocks
-  },
-
-  /**
-   * @return {Stock|null}
-   */
-  async findStock({ symbol }) {
-    let stock = null
-    await sqliteDB.readTransaction(async trans => {
-      const result = await trans.executeSql('SELECT * FROM stocks WHERE symbol=?', [symbol])
-      const rows = result[1].rows
-      stock = rows.length > 0 ? Stock.fromDB(rows.item(0)) : null
-    })
-    return stock
-  },
-
-  /**
-   * @return {Stock|null}
-   */
-  async findLastUpdatedStock() {
-    let stock = null
-    await sqliteDB.readTransaction(async trans => {
-      const result = await trans.executeSql('SELECT * FROM stocks ORDER BY updated_at DESC LIMIT 1')
-      const rows = result[1].rows
-      stock = rows.length > 0 ? Stock.fromDB(rows.item(0)) : null
-    })
-    return stock
+  async findUser(uuid) {
+    check(uuid, 'uuid').is.aString()
+    return findOne('SELECT * FROM users WHERE uuid=?', [uuid]).then(row => (row != null ? User.fromDB(row) : null))
   },
 
   /**
    * @param {Stock} stock
    */
   async saveStock(stock) {
-    await sqliteDB.transaction(async trans => {
-      const forDB = Stock.toDB(stock)
-      const keys = Object.keys(forDB)
-      const query = `INSERT OR REPLACE INTO stocks (${keys.join(',')}) VALUES (${createQueryPlaceholders(keys.length)})`
-      const params = keys.map(key => forDB[key])
-      await trans.executeSql(query, params)
-    })
+    check(stock, 'stock').is.anInstanceOf(Stock)
+    return insertOrReplace('stocks', Stock.toDB(stock))
+  },
+
+  /**
+   * @return {Stock[]}
+   */
+  async findStocks() {
+    return find('SELECT * FROM stocks').then(rows => rows.map(Stock.fromDB))
+  },
+
+  /**
+   * @param {string} symbol
+   * @return {Stock|null}
+   */
+  async findStock(symbol) {
+    check(symbol, 'symbol').is.aString()
+    return findOne('SELECT * FROM stocks WHERE symbol=?', [symbol]).then(row => (row != null ? Stock.fromDB(row) : null))
+  },
+
+  /**
+   * @return {Stock|null}
+   */
+  async findLastUpdatedStock() {
+    return findOne('SELECT * FROM stocks ORDER BY updated_at DESC LIMIT 1').then(row => (row != null ? Stock.fromDB(row) : null))
   },
 
   /**
    * @param {Alert} alert
    */
-  async saveAlert(alert) {
-    await sqliteDB.transaction(async trans => {
-      const forDB = Alert.toDB(alert)
-      const keys = Object.keys(forDB)
-      const query = `INSERT OR REPLACE INTO alerts (${keys.join(',')}) VALUES (${createQueryPlaceholders(keys.length)})`
-      const params = keys.map(key => forDB[key])
-      await trans.executeSql(query, params)
-    })
+  saveAlert(alert) {
+    check(alert, 'alert').is.anInstanceOf(Alert)
+    return insertOrReplace('alerts', Alert.toDB(alert))
   },
 
   /**
+   * @param {string} uuid
+   * @return {Promise<Alert|null,Error>}
+   */
+  async findAlert(uuid) {
+    check(uuid, 'uuid').is.aString()
+    return findOne('SELECT * FROM alerts WHERE uuid=?', [uuid]).then(row => (row != null ? Alert.fromDB(row) : null))
+  },
+
+  /**
+   * @param {string} userUUID
    * @return {Alert[]}
    */
-  async findAlerts() {
-    let alerts = []
-    await sqliteDB.readTransaction(async trans => {
-      const result = await trans.executeSql('SELECT * FROM alerts')
-      const rows = result[1].rows
-      alerts = rows.raw().map(Alert.fromDB)
-    })
-    return alerts
+  async findAlerts(userUUID) {
+    check(userUUID, 'userUUID').is.aString()
+    return find('SELECT * FROM alerts WHERE user_uuid=?', [userUUID]).then(rows => rows.map(Alert.fromDB))
   }
 }

@@ -1,8 +1,9 @@
 import { createLogic } from 'redux-logic'
 
-import { Stock } from '../../../models'
-
+import { database } from '../../../services/db'
 import * as api from '../../../utils/api'
+
+import { Stock } from '../../../models'
 
 import * as types from '../types'
 import * as actions from '../actions'
@@ -21,7 +22,7 @@ export const stocksFetchLogic = createLogic({
   type: types.STOCKS_FETCH_START,
   latest: true,
 
-  async process({ getState, database }, dispatch, done) {
+  async process({ getState }, dispatch, done) {
     try {
       // If there is no state set yet, load from DB
       if (!getState().stocks.loadedFromDb) {
@@ -29,7 +30,7 @@ export const stocksFetchLogic = createLogic({
         await dispatch(actions.stocksLoadedFromDb(map))
       }
 
-      const map = stocksListToMap(await fetchAndSaveStocks({ accessToken: getState().session.accessToken, database }))
+      const map = stocksListToMap(await fetchAndSaveStocks({ accessToken: getState().session.accessToken }))
       dispatch(actions.stocksFetchFulfilled(map))
     } catch (error) {
       dispatch(actions.stocksFetchRejected(error))
@@ -38,7 +39,7 @@ export const stocksFetchLogic = createLogic({
   }
 })
 
-async function fetchAndSaveStocks({ accessToken, database }) {
+async function fetchAndSaveStocks({ accessToken }) {
   const updatedAfter = await (async () => {
     const lastUpdatedStock = await database.findLastUpdatedStock()
     return lastUpdatedStock != null ? lastUpdatedStock.updated_at : null
@@ -50,7 +51,7 @@ async function fetchAndSaveStocks({ accessToken, database }) {
     fetchedList.map(async fetchedStock => {
       const toSave = Stock.fromAPI(fetchedStock)
       await database.saveStock(toSave)
-      const saved = await database.findStock({ symbol: toSave.symbol })
+      const saved = await database.findStock(toSave.symbol)
       return saved
     })
   )

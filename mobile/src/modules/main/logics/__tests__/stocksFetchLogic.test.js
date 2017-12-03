@@ -50,7 +50,7 @@ it('loads the stocks from the db first', async () => {
   // Arrange
   expect(await database.findStocks()).toHaveLength(3)
 
-  const store = createMockStore({ initialState: {}, reducer: rootReducer, logic: [stocksFetchLogic], injectedDeps: { database } })
+  const store = createMockStore({ initialState: {}, reducer: rootReducer, logic: [stocksFetchLogic] })
 
   // Act
   store.dispatch(stocksFetchStart())
@@ -62,7 +62,14 @@ it('loads the stocks from the db first', async () => {
     expect(action.type).toEqual(STOCKS_FETCH_REJECTED)
 
     // The stocks from the DB should have been stored in the state
-    const listFromState = store.getState().stocks.list
+    const mapFromState = store.getState().stocks.map
+    Object.entries(mapFromState).forEach(([symbol, stock]) => {
+      expect(typeof symbol).toBe('string')
+      expect(stock).toBeInstanceOf(Stock)
+      expect(symbol).toEqual(stock.symbol)
+    })
+
+    const listFromState = Object.values(mapFromState)
     expect(listFromState).toHaveLength(3)
     expect(listFromState).toEqual(stocks)
   })
@@ -71,7 +78,7 @@ it('loads the stocks from the db first', async () => {
 it('uses the latest updated stock when fetching', () => {
   // Arrange
   const initialState = { session: { user, accessToken } }
-  const store = createMockStore({ initialState, reducer: rootReducer, logic: [stocksFetchStartLogic, stocksFetchLogic], injectedDeps: { database } })
+  const store = createMockStore({ initialState, reducer: rootReducer, logic: [stocksFetchStartLogic, stocksFetchLogic] })
 
   // Act
   // An access token fulfilled should immediately start a stock fetch
@@ -81,15 +88,22 @@ it('uses the latest updated stock when fetching', () => {
   return store.whenComplete(() => {
     const action = store.actions[store.actions.length - 1]
     expect(action.type).toEqual(STOCKS_FETCH_FULFILLED)
-    expect(Array.isArray(action.payload)).toBeTruthy()
+    expect(typeof action.payload === 'object').toBeTruthy()
 
     expect(database.findLastUpdatedStock).toHaveBeenCalledTimes(1)
 
     // Assert the payload is a list of stocks
-    action.payload.forEach(stock => expect(stock).toBeInstanceOf(Stock))
+    Object.values(action.payload).forEach(stock => expect(stock).toBeInstanceOf(Stock))
 
     // Assert the state was updated with the list
-    const stocksInState = store.getState().stocks.list
+    const mapFromState = store.getState().stocks.map
+    Object.entries(mapFromState).forEach(([symbol, stock]) => {
+      expect(typeof symbol).toBe('string')
+      expect(stock).toBeInstanceOf(Stock)
+      expect(symbol).toEqual(stock.symbol)
+    })
+
+    const stocksInState = Object.values(mapFromState)
     expect(stocksInState.length).toBeGreaterThan(stocks.length)
     stocksInState.forEach(stock => expect(stock).toBeInstanceOf(Stock))
   })

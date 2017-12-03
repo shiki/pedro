@@ -49,6 +49,10 @@ export class Alert {
    */
   synchronized = false
 
+  /**
+   * @param {Object} param
+   * @param {string} operator One of {@link OPERATOR_LESS_THAN} and {@link OPERATOR_GREATER_THAN}
+   */
   constructor({
     uuid,
     user_uuid,

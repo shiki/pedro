@@ -64,7 +64,7 @@ exports[`renders correctly 1`] = `
           }
         >
            
-          100.000000
+          100.00
         </Text>
       </Text>
       <Text
@@ -136,7 +136,7 @@ exports[`renders correctly 1`] = `
         ]
       }
     >
-      100.991000
+      100.99
     </Text>
   </View>
   <View
@@ -199,7 +199,7 @@ exports[`renders correctly 1`] = `
           ]
         }
       >
-        100.000000
+        100.00
       </Text>
       <Text
         accessible={true}

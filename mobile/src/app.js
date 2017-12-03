@@ -13,9 +13,9 @@ import { shouldRunIntegrationApp } from './config'
 export default async function bootstrap() {
   await loadIcons()
 
-  const { database } = await openDatabase()
+  await openDatabase()
 
-  const store = buildStore({ database })
+  const store = buildStore()
   registerScreens(store)
 
   if (shouldRunIntegrationApp()) {
